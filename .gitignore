@@ -1,0 +1,17 @@
+﻿# Clés API et secrets
+.env
+*.env
+secrets.ps1
+
+# Exports n8n (backups locaux, pas versionnés)
+sandbox/_briques/exports/
+
+# Dossiers clients (données sensibles)
+clients/*/
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Divers
+*.log
