@@ -65,3 +65,57 @@ h1, h2, h3 {
   letter-spacing: 0.14em;
   color: var(--mint-500);
 }
+
+/* ---- Effets de la landing (sobre-premium, accents menthe) ---- */
+
+/* Révélation au scroll (activée par la classe .in ajoutée en JS). */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* Grille de fond subtile (profondeur sans surcharge). */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink-200) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink-200) 45%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+}
+
+/* Halo lumineux menthe (derrière le hero / éléments clés). */
+.glow {
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--mint-400) 55%, transparent), transparent 70%);
+  filter: blur(60px);
+}
+
+/* Apparition d'un message (démo Telegram). */
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.pop-in { animation: pop-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Indicateur de frappe. */
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-dot { animation: typing 1.2s infinite; }
+
+/* Pulsation douce (statut « live »). */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mint-500) 55%, transparent); }
+  70% { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-ring { animation: pulse-ring 2s infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .pop-in, .typing-dot, .pulse-ring { animation: none; }
+}
