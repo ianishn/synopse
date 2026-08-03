@@ -23,18 +23,28 @@ export default async function Dashboard() {
   const plan = sub && sub.status !== "canceled" ? sub.plan : "free";
 
   return (
-    <main className="mx-auto mt-12 max-w-2xl space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">🛡️ Synopse</h1>
-        <div className="flex gap-4 text-sm">
-          <a className="underline" href="/dashboard/journal">Journal</a>
-          <form action="/auth/signout" method="post">
-            <button className="underline">Se déconnecter</button>
-          </form>
+    <div className="min-h-screen">
+      <header className="border-b border-ink-100">
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-6 py-4">
+          <a href="/dashboard" className="font-display text-lg font-bold tracking-tight">
+            synopse<span className="text-mint-500">.</span>
+          </a>
+          <div className="flex items-center gap-4 text-sm text-ink-500">
+            <a className="hover:text-ink-900" href="/dashboard/journal">Journal</a>
+            <form action="/auth/signout" method="post">
+              <button className="hover:text-ink-900">Se déconnecter</button>
+            </form>
+          </div>
         </div>
-      </div>
-      <AgentsPanel agents={agents ?? []} spendByAgent={spendByAgent} />
-      <BillingCard plan={plan} />
-    </main>
+      </header>
+      <main className="mx-auto max-w-2xl space-y-8 px-6 py-10">
+        <div>
+          <h1 className="text-2xl font-bold">Tableau de bord</h1>
+          <p className="mt-1 text-sm text-ink-500">Tes agents protégés, en un coup d&apos;œil.</p>
+        </div>
+        <AgentsPanel agents={agents ?? []} spendByAgent={spendByAgent} />
+        <BillingCard plan={plan} />
+      </main>
+    </div>
   );
 }

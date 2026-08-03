@@ -14,26 +14,32 @@ export function BillingCard({ plan }: { plan: string }) {
     else alert(data.error ?? "Erreur");
   }
 
-  const label = plan === "protege" ? "Protégé (9 €/mois)" : plan === "studio" ? "Studio (19 €/mois)" : "Gratuit";
+  const label = plan === "protege" ? "Protégé · 9 €/mois" : plan === "studio" ? "Studio · 19 €/mois" : "Gratuit";
   return (
-    <div className="flex items-center justify-between rounded border p-4 text-sm">
-      <p>Plan : <span className="font-medium">{label}</span></p>
-      <div className="flex gap-2">
-        {plan === "free" ? (
-          <>
-            <button disabled={busy} onClick={() => go("/api/billing/checkout", { plan: "protege" })}
-              className="rounded bg-black px-3 py-2 font-medium text-white dark:bg-white dark:text-black">
-              Passer à Protégé — 9 €/mois
+    <section className="space-y-4">
+      <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">Abonnement</h2>
+      <div className="flex flex-col gap-4 rounded-2xl border border-ink-100 bg-paper p-5 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <p>Plan actuel : <span className="font-medium">{label}</span></p>
+        <div className="flex flex-wrap gap-2">
+          {plan === "free" ? (
+            <>
+              <button disabled={busy} onClick={() => go("/api/billing/checkout", { plan: "protege" })}
+                className="rounded-full bg-ink-950 px-4 py-2 font-medium text-white transition hover:bg-ink-700 disabled:opacity-50">
+                Passer à Protégé — 9 €
+              </button>
+              <button disabled={busy} onClick={() => go("/api/billing/checkout", { plan: "studio" })}
+                className="rounded-full border border-ink-200 px-4 py-2 font-medium transition hover:border-ink-400 disabled:opacity-50">
+                Studio — 19 €
+              </button>
+            </>
+          ) : (
+            <button disabled={busy} onClick={() => go("/api/billing/portal")}
+              className="rounded-full border border-ink-200 px-4 py-2 font-medium transition hover:border-ink-400 disabled:opacity-50">
+              Gérer mon abonnement
             </button>
-            <button disabled={busy} onClick={() => go("/api/billing/checkout", { plan: "studio" })}
-              className="rounded border px-3 py-2">Studio — 19 €</button>
-          </>
-        ) : (
-          <button disabled={busy} onClick={() => go("/api/billing/portal")} className="rounded border px-3 py-2">
-            Gérer mon abonnement
-          </button>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

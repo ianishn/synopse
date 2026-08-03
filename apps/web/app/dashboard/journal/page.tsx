@@ -29,30 +29,47 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
     t === "blocked" ? "🛡️" : t === "approved" ? "✅" : t === "denied" ? "❌" : t === "budget_alert" ? "💶" : "ℹ️";
 
   return (
-    <main className="mx-auto mt-12 max-w-2xl space-y-4 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Journal</h1>
-        <Link className="text-sm underline" href="/dashboard">← Tableau de bord</Link>
-      </div>
-      <nav className="flex gap-3 text-sm">
-        {[["", "Tout"], ["bloque", "Bloqué"], ["valide", "Validations"], ["info", "Infos"]].map(([k, label]) => (
-          <Link key={k} href={k ? `?f=${k}` : "?"}
-            className={`rounded border px-2 py-1 ${f === k || (!f && !k) ? "bg-black text-white dark:bg-white dark:text-black" : ""}`}>
-            {label}
-          </Link>
-        ))}
-      </nav>
-      <ul className="divide-y rounded border">
-        {(events ?? []).map((e) => (
-          <li key={e.id} className="p-3 text-sm">
-            <span className="mr-2">{icon(e.type)}</span>{e.summary_fr}
-            <span className="mt-1 block text-xs opacity-60">
-              {names[e.agent_id]} · {new Date(e.created_at).toLocaleString("fr-FR")}
-            </span>
-          </li>
-        ))}
-        {!events?.length && <li className="p-4 text-sm opacity-60">Aucun événement pour l&apos;instant.</li>}
-      </ul>
-    </main>
+    <div className="min-h-screen">
+      <header className="border-b border-ink-100">
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-6 py-4">
+          <a href="/dashboard" className="font-display text-lg font-bold tracking-tight">
+            synopse<span className="text-mint-500">.</span>
+          </a>
+          <Link className="text-sm text-ink-500 hover:text-ink-900" href="/dashboard">← Tableau de bord</Link>
+        </div>
+      </header>
+      <main className="mx-auto max-w-2xl space-y-6 px-6 py-10">
+        <div>
+          <h1 className="text-2xl font-bold">Journal</h1>
+          <p className="mt-1 text-sm text-ink-500">Chaque action sensible, en clair. Conservé 90 jours.</p>
+        </div>
+        <nav className="flex flex-wrap gap-2 text-sm">
+          {[["", "Tout"], ["bloque", "Bloqué"], ["valide", "Validations"], ["info", "Infos"]].map(([k, label]) => (
+            <Link key={k} href={k ? `?f=${k}` : "?"}
+              className={`rounded-full px-4 py-1.5 transition ${
+                f === k || (!f && !k)
+                  ? "bg-ink-950 text-white"
+                  : "border border-ink-200 text-ink-600 hover:border-ink-400"
+              }`}>
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <ul className="divide-y divide-ink-100 overflow-hidden rounded-2xl border border-ink-100 bg-paper">
+          {(events ?? []).map((e) => (
+            <li key={e.id} className="flex gap-3 p-4 text-sm">
+              <span className="text-base leading-none">{icon(e.type)}</span>
+              <div>
+                <p>{e.summary_fr}</p>
+                <p className="mt-1 text-xs text-ink-400">
+                  {names[e.agent_id]} · {new Date(e.created_at).toLocaleString("fr-FR")}
+                </p>
+              </div>
+            </li>
+          ))}
+          {!events?.length && <li className="p-6 text-center text-sm text-ink-400">Aucun événement pour l&apos;instant.</li>}
+        </ul>
+      </main>
+    </div>
   );
 }
