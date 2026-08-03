@@ -10,11 +10,12 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const router = useRouter();
-  const supabase = createClient();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    // Client créé à l'usage (pas au rendu) : le prérendu du build n'exige pas les clés env.
+    const supabase = createClient();
     const { error } =
       mode === "signin"
         ? await supabase.auth.signInWithPassword({ email, password })
@@ -25,7 +26,7 @@ export default function LoginPage() {
   }
 
   async function google() {
-    await supabase.auth.signInWithOAuth({
+    await createClient().auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${location.origin}/auth/callback` },
     });
