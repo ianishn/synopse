@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
   // Regroupement par user (un rapport par compte, tous agents confondus).
   const byUser = new Map<string, { name: string; ids: string[] }>();
-  for (const a of agents ?? []) {
+  for (const a of (agents ?? []) as Array<{ id: string; name: string; user_id: string }>) {
     const u = byUser.get(a.user_id) ?? { name: a.name, ids: [] };
     u.ids.push(a.id);
     byUser.set(a.user_id, u);

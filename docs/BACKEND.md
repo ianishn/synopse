@@ -91,3 +91,4 @@ Deux chemins d'authentification, à ne jamais mélanger :
 - `main` = prod (synopse.eu, Vercel). `build-v1` = branche de travail, preview Vercel.
 - Secrets : `.env.local` en local (gitignoré), variables Vercel en déployé. `SUPABASE_SERVICE_ROLE_KEY` et `PAYLOAD_ENCRYPTION_KEY` = serveur uniquement (pas de préfixe NEXT_PUBLIC).
 - Supabase : projet région **EU (Francfort)** — argument RGPD, ne pas changer.
+- **Build qui échoue avec `EINVAL readlink ...\.next\...`** : OneDrive corrompt les artefacts — `rm -rf apps/web/.next` puis rebuild. Fix durable : exclure le repo de OneDrive ou le déplacer hors du dossier synchronisé.
