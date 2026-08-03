@@ -111,11 +111,17 @@ Deux chemins d'authentification, à ne jamais mélanger :
 
 **Vérifié sain** : RLS testée (isolation inter-users), gardes de propriété sur delete/freeze agent (404/401), signature Stripe en HMAC + fenêtre anti-rejeu 5 min, webhook Telegram protégé par secret + commandes STOP/REPRISE limitées au compte lié, tokens d'agent 24 octets aléatoires révocables, CSRF mitigé par cookies Supabase `SameSite=Lax`.
 
-**Recommandations restantes (décisions infra / suivi)** :
-- **CSP complète** (`script-src`/`connect-src`) : à ajouter en suivi, nécessite un test navigateur (une CSP mal réglée casse le site). Autoriser Supabase (`NEXT_PUBLIC_SUPABASE_URL` + wss) et PostHog (`eu.i.posthog.com`).
-- **Rate limiting** login + webhooks (Vercel WAF ou Upstash) au moment du passage à l'échelle.
-- **Dépendances** : `pnpm audit` signale des vulns transitives (postcss/sharp sous Next) — build-time, faible exploitabilité dans notre usage ; garder Next à jour.
-- **Secrets prod à poser avant lancement** : `STRIPE_WEBHOOK_SECRET` (Stripe Dashboard) et enregistrer le webhook Telegram avec `TELEGRAM_WEBHOOK_SECRET` (voir §6bis).
+**Ajouté au 2e passage** :
+- **CSP complète en production** (`next.config.ts`) : `default-src 'self'`, `connect-src` limité à Supabase (REST/auth + realtime wss) et PostHog, `script-src`/`style-src 'self' 'unsafe-inline'` (Next hydratation + Tailwind), `object-src 'none'`, `base-uri`/`form-action 'self'`, `upgrade-insecure-requests`. **Prod uniquement** (le dev garde eval pour React refresh). ⚠️ La CSP est appliquée par le navigateur : après un changement, vérifier que login + dashboard se chargent sans erreur console. La barre d'outils Vercel Live (preview) peut être bloquée — sans impact.
+- **Dépendances** : override pnpm `postcss: 8.5.25` (`pnpm-workspace.yaml`) → advisories postcss résolus sans upgrade majeur de Next. Reste 1 high `sharp` (libvips) : module natif d'optimisation d'images, **non exploitable** (on ne traite aucune image utilisateur) ; ne pas forcer sa version (binaire natif). Réévaluer à la prochaine montée de Next.
+
+**Rate limiting** — sur ce stack serverless, un limiteur en mémoire est inefficace (fonctions sans état). État des lieux :
+- **Login/signup** : déjà rate-limité côté **Supabase Auth** (limites par IP intégrées). OK.
+- **Webhooks** : protégés par signature/secret → un flood ne coûte qu'un 400/403.
+- **`/api/agent/*`** : token 24 octets aléatoires → brute force infaisable.
+- Pour aller plus loin à l'échelle : activer **Vercel WAF** (règles de rate limiting par IP dans le dashboard Vercel, sans code) ou brancher **Upstash Redis** (`@upstash/ratelimit`). Décision infra, à activer au moment du trafic.
+
+**Secrets prod à poser avant lancement** : `STRIPE_WEBHOOK_SECRET` (Stripe Dashboard) et enregistrer le webhook Telegram avec `TELEGRAM_WEBHOOK_SECRET` (voir §6bis).
 
 ## 7. Environnements
 

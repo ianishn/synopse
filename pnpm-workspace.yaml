@@ -4,3 +4,6 @@ packages:
 allowBuilds:
   sharp: true
   unrs-resolver: true
+# Force postcss patché (>=8.5.23) : corrige les advisories transitifs sous Next sans upgrade majeur.
+overrides:
+  postcss: "8.5.25"
