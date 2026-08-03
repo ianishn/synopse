@@ -23,9 +23,12 @@ export default async function Dashboard() {
     <main className="mx-auto mt-12 max-w-2xl space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">🛡️ Synopse</h1>
-        <form action="/auth/signout" method="post">
-          <button className="text-sm underline">Se déconnecter</button>
-        </form>
+        <div className="flex gap-4 text-sm">
+          <a className="underline" href="/dashboard/journal">Journal</a>
+          <form action="/auth/signout" method="post">
+            <button className="underline">Se déconnecter</button>
+          </form>
+        </div>
       </div>
       <AgentsPanel agents={agents ?? []} spendByAgent={spendByAgent} />
     </main>
