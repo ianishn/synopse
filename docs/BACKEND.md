@@ -55,7 +55,7 @@ Deux chemins d'authentification, à ne jamais mélanger :
 
 - **`GET /api/cron/check`** (à la minute) fait tout : expiration des approvals (refus), détection heartbeat > 15 min (`silent` + alerte Telegram), purge events > 90 j. Auth : header Vercel Cron OU `Bearer CRON_SECRET`.
 - ⚠️ **Vercel Hobby limite les crons à 1/jour** : si le projet est en Hobby, brancher un pinger externe gratuit (cron-job.org, à la minute) sur l'URL avec le header `Authorization: Bearer <CRON_SECRET>`. `vercel.json` contient déjà l'entrée cron pour un éventuel plan Pro.
-- Rapport hebdo (F7) : job à ajouter (dim. 18h) — pas encore construit.
+- **`GET /api/cron/weekly`** (dim. 18h) : rapport hebdo par compte (blocages, validations, coût) → Telegram + email Resend si `RESEND_API_KEY` présent.
 
 ## 5bis. Kill switch & plafonds (implémenté)
 
@@ -83,7 +83,7 @@ Deux chemins d'authentification, à ne jamais mélanger :
 
 - Env requis chez le client : `SYNOPSE_AGENT_TOKEN` (+ `SYNOPSE_API_URL` hors prod).
 - Config OpenClaw : `plugins.load.paths=[<dossier plugin>]` et `plugins.entries.synopse.hooks.timeoutMs=600000` (max OpenClaw = 10 min < timeout d'approbation 15 min : au-delà de 10 min sans réponse, OpenClaw rejette l'outil lui-même → toujours un refus, jamais un passage).
-- Cache config : `~/.synopse/config-cache.json` (fail-safe hors ligne). Le kill switch arrive via heartbeat (5 min) ET via la config — latence de gel ≤ 5 min tant que le poll heartbeat n'est pas resserré (F5 : à resserrer).
+- Cache config : `~/.synopse/config-cache.json` (fail-safe hors ligne). Kill switch : statut re-vérifié à chaque tool call si dernier check > 25 s → gel effectif < 30 s.
 - `@synopse/shared` doit être **buildé** (`pnpm --filter @synopse/shared build`) : le plugin importe `dist/`.
 
 ## 7. Environnements
