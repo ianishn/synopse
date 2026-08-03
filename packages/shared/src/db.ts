@@ -3,7 +3,7 @@
  * ⚠️ Toute modification du schéma SQL doit être répercutée ici (et inversement).
  */
 
-import type { RuleMatcher } from "./rules";
+import type { RuleMatcher } from "./rules.js";
 
 export type AgentStatus = "active" | "frozen" | "silent";
 export type RuleSeverity = "block" | "confirm" | "notify";

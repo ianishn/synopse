@@ -4,7 +4,7 @@
  * seul son SHA-256 est stocké en DB → révocable en supprimant le hash).
  * Fail-safe côté plugin : API injoignable = politique locale (block bloque, confirm refuse).
  */
-import type { CompiledConfig } from "./rules";
+import type { CompiledConfig } from "./rules.js";
 
 /** POST /api/agent/events — journal + usage tokens (batch possible). */
 export type PostEventsRequest = {

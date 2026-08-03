@@ -5,7 +5,7 @@
  * `domain_allowlist: []` = tout domaine détecté est "inconnu" tant que l'user n'a rien
  * ajouté (params_json de la rule peut surcharger l'allowlist).
  */
-import type { RuleTemplate } from "./db";
+import type { RuleTemplate } from "./db.js";
 
 export const RULES_CATALOG: RuleTemplate[] = [
   // ---------- Communs / Perso ----------

@@ -3,7 +3,7 @@
  * Sémantique : conditions présentes combinées en AND ; condition absente = non contraignante.
  * Validé par les tests `src/evaluate.test.ts` (node --test, 20+ cas dont les scénarios d'attaque).
  */
-import type { RuleMatcher } from "./rules";
+import type { RuleMatcher } from "./rules.js";
 
 export type MatchResult = {
   matched: boolean;

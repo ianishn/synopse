@@ -69,6 +69,20 @@ Deux chemins d'authentification, à ne jamais mélanger :
 - **Coûts estimés faux** : mettre à jour `packages/shared/src/pricing.ts` (table manuelle).
 - **Erreur « service_role » côté navigateur** : fuite grave — `SUPABASE_SERVICE_ROLE_KEY` ne doit exister que dans les routes serveur. Auditer les imports de `createServiceClient`.
 
+## 6bis. Telegram — dev vs prod
+
+- **Prod** : Telegram pousse vers `/api/telegram/webhook` (vérif header secret). Activer une fois :
+  `curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://www.synopse.eu/api/telegram/webhook&secret_token=<TELEGRAM_WEBHOOK_SECRET>"`
+- **Dev local** : Telegram ne peut pas joindre localhost → lancer `node scripts/telegram-poll.mjs` (même logique, via getUpdates). ⚠️ Ne jamais faire tourner le poller quand le webhook prod est actif (conflit getUpdates/webhook).
+- Liaison compte↔chat : le dashboard génère `telegram_link_code` (user_settings), l'user clique `t.me/<bot>?start=<code>`, le webhook renseigne `telegram_chat_id`. Fallback dev : env `TELEGRAM_CHAT_ID`.
+
+## 6ter. Plugin (packages/plugin)
+
+- Env requis chez le client : `SYNOPSE_AGENT_TOKEN` (+ `SYNOPSE_API_URL` hors prod).
+- Config OpenClaw : `plugins.load.paths=[<dossier plugin>]` et `plugins.entries.synopse.hooks.timeoutMs=600000` (max OpenClaw = 10 min < timeout d'approbation 15 min : au-delà de 10 min sans réponse, OpenClaw rejette l'outil lui-même → toujours un refus, jamais un passage).
+- Cache config : `~/.synopse/config-cache.json` (fail-safe hors ligne). Le kill switch arrive via heartbeat (5 min) ET via la config — latence de gel ≤ 5 min tant que le poll heartbeat n'est pas resserré (F5 : à resserrer).
+- `@synopse/shared` doit être **buildé** (`pnpm --filter @synopse/shared build`) : le plugin importe `dist/`.
+
 ## 7. Environnements
 
 - `main` = prod (synopse.eu, Vercel). `build-v1` = branche de travail, preview Vercel.
