@@ -41,9 +41,16 @@ export default function Landing() {
             </span>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 text-4xl font-bold leading-[1.1] md:text-[3.4rem]">
+            <h1 className="mt-6 text-4xl font-bold leading-[1.15] md:text-[3.4rem]">
               Ton agent IA bosse pour toi.<br />
-              <span className="text-ink-400">Synopse vérifie qu&apos;il ne fait que ça.</span>
+              <span className="text-ink-400">Synopse vérifie qu&apos;il ne fait </span>
+              <span className="relative inline-block text-ink-900">
+                que ça
+                <svg className="underline-draw absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 240 12" fill="none" preserveAspectRatio="none" aria-hidden>
+                  <path d="M3 8C40 3 120 2 237 6" stroke="var(--mint-500)" strokeWidth="4" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="text-ink-400">.</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>

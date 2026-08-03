@@ -1,8 +1,9 @@
-/** Dashboard V1 : agents + kill switch + pairing. (Journal et règles : étape suivante.) */
+/** Dashboard V1 : agents (gérer/supprimer), règles, tuto, connecteur, billing. */
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { AgentsPanel } from "./agents-panel";
 import { BillingCard } from "./billing-card";
+import { TutorialModal } from "./tutorial-modal";
 
 export const dynamic = "force-dynamic";
 
@@ -41,9 +42,13 @@ export default async function Dashboard() {
         </div>
       </header>
       <main className="mx-auto max-w-2xl space-y-8 px-6 py-10">
-        <div>
-          <h1 className="text-2xl font-bold">Tableau de bord</h1>
-          <p className="mt-1 text-sm text-ink-500">Tes agents protégés, en un coup d&apos;œil.</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Tableau de bord</h1>
+            <p className="mt-1 text-sm text-ink-500">Tes agents protégés, en un coup d&apos;œil.</p>
+          </div>
+          {/* Tutoriel animé en pop-up (connecter + gérer). */}
+          <TutorialModal />
         </div>
         <AgentsPanel agents={agents ?? []} spendByAgent={spendByAgent} />
 
