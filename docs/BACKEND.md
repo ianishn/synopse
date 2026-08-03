@@ -100,6 +100,23 @@ Deux chemins d'authentification, à ne jamais mélanger :
 - Cache config : `~/.synopse/config-cache.json` (fail-safe hors ligne). Kill switch : statut re-vérifié à chaque tool call si dernier check > 25 s → gel effectif < 30 s.
 - `@synopse/shared` doit être **buildé** (`pnpm --filter @synopse/shared build`) : le plugin importe `dist/`.
 
+## 6quater. Sécurité (audit 2026-08-03)
+
+**Modèle** : deux chemins d'auth (session humaine RLS / token d'agent hashé). Payloads d'approbation chiffrés AES-256-GCM (IV aléatoire + tag). Secrets serveur jamais exposés au navigateur.
+
+**Corrigé lors de l'audit** :
+- **Webhook Stripe fail-closed en prod** : sans `STRIPE_WEBHOOK_SECRET`, le webhook est REFUSÉ (avant : accepté sans signature → un événement forgé pouvait accorder un plan payant). Bypass toléré uniquement en dev.
+- **Crons durcis** (`lib/cron-auth.ts`) : on n'accepte plus l'en-tête `x-vercel-cron` (falsifiable) — seul `Authorization: Bearer <CRON_SECRET>` autorise. Vercel Cron l'ajoute automatiquement si `CRON_SECRET` est défini. Sans ce secret → tout est refusé.
+- **En-têtes de sécurité** (`next.config.ts`) sur toutes les routes : HSTS, `X-Frame-Options: DENY` + CSP `frame-ancestors 'none'` (anti-clickjacking du dashboard), `nosniff`, `Referrer-Policy`, `Permissions-Policy`.
+
+**Vérifié sain** : RLS testée (isolation inter-users), gardes de propriété sur delete/freeze agent (404/401), signature Stripe en HMAC + fenêtre anti-rejeu 5 min, webhook Telegram protégé par secret + commandes STOP/REPRISE limitées au compte lié, tokens d'agent 24 octets aléatoires révocables, CSRF mitigé par cookies Supabase `SameSite=Lax`.
+
+**Recommandations restantes (décisions infra / suivi)** :
+- **CSP complète** (`script-src`/`connect-src`) : à ajouter en suivi, nécessite un test navigateur (une CSP mal réglée casse le site). Autoriser Supabase (`NEXT_PUBLIC_SUPABASE_URL` + wss) et PostHog (`eu.i.posthog.com`).
+- **Rate limiting** login + webhooks (Vercel WAF ou Upstash) au moment du passage à l'échelle.
+- **Dépendances** : `pnpm audit` signale des vulns transitives (postcss/sharp sous Next) — build-time, faible exploitabilité dans notre usage ; garder Next à jour.
+- **Secrets prod à poser avant lancement** : `STRIPE_WEBHOOK_SECRET` (Stripe Dashboard) et enregistrer le webhook Telegram avec `TELEGRAM_WEBHOOK_SECRET` (voir §6bis).
+
 ## 7. Environnements
 
 - `main` = prod (synopse.eu, Vercel). `build-v1` = branche de travail, preview Vercel.

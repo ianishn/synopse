@@ -7,12 +7,10 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { chatIdForUser, tg } from "@/lib/telegram";
+import { isCronAuthorized } from "@/lib/cron-auth";
 
 export async function GET(request: Request) {
-  const authorized =
-    request.headers.get("x-vercel-cron") ||
-    request.headers.get("authorization") === `Bearer ${process.env.CRON_SECRET}`;
-  if (!authorized) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  if (!isCronAuthorized(request)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 
   const db = createServiceClient();
   const now = new Date().toISOString();
