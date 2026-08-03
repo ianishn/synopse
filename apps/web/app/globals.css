@@ -46,6 +46,10 @@
   --font-mono: var(--font-jetbrains);
 }
 
+/* Marque « papier » assumée en clair : force les contrôles natifs (inputs, scrollbars)
+   à rester clairs même quand l'OS est en mode sombre — évite des champs illisibles au login. */
+:root { color-scheme: light; }
+
 body {
   background: var(--canvas);
   color: var(--ink-900);

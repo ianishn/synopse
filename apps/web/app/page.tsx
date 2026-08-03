@@ -10,7 +10,7 @@ import { Reveal } from "./landing/reveal";
 import { Counter } from "./landing/counter";
 
 const CTA =
-  "inline-flex items-center gap-2 rounded-full bg-ink-950 px-7 py-3.5 font-semibold text-white shadow-[0_10px_30px_-10px_rgba(6,9,8,0.4)] transition-all hover:bg-ink-700 hover:-translate-y-0.5";
+  "inline-flex items-center gap-2 rounded-full bg-ink-950 px-7 py-3.5 font-semibold text-white shadow-[0_10px_30px_-10px_rgba(6,9,8,0.4)] transition duration-200 hover:bg-ink-700 hover:-translate-y-0.5";
 
 export default function Landing() {
   return (
@@ -108,7 +108,7 @@ export default function Landing() {
               ["La publication non voulue", "Un tweet, un mail client, un avis publié « en ton nom » — impossible à rattraper."],
             ].map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="h-full rounded-2xl border border-ink-100 bg-paper p-7 transition-all hover:-translate-y-1 hover:border-mint-300 hover:shadow-[0_20px_50px_-24px_rgba(6,9,8,0.25)]">
+                <div className="h-full rounded-2xl border border-ink-100 bg-paper p-7 transition duration-300 hover:-translate-y-1 hover:border-mint-300 hover:shadow-[0_20px_50px_-24px_rgba(6,9,8,0.25)]">
                   <p className="font-mono text-sm text-mint-500">0{i + 1}</p>
                   <h3 className="mt-3 text-lg font-semibold">{title}</h3>
                   <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-500">{desc}</p>
@@ -147,7 +147,7 @@ export default function Landing() {
               ["Choisis tes règles", "En français : « Toujours me demander avant de dépenser ». Un clic par profil."],
             ].map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="relative h-full rounded-2xl bg-paper p-7 text-left shadow-[0_6px_24px_-12px_rgba(6,9,8,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(6,9,8,0.2)]">
+                <div className="relative h-full rounded-2xl bg-paper p-7 text-left shadow-[0_6px_24px_-12px_rgba(6,9,8,0.12)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(6,9,8,0.2)]">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-100 font-mono text-sm font-medium text-ink-900">{i + 1}</span>
                   {i < 2 && <span className="absolute right-6 top-9 hidden text-ink-200 md:block" aria-hidden>→</span>}
                   <h3 className="mt-4 font-semibold">{title}</h3>

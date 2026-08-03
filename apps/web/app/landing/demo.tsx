@@ -54,7 +54,7 @@ export function Demo() {
       {/* Fil de progression */}
       <div className="mb-6 flex items-center justify-center gap-2">
         {[0, 1, 2, 3].map((i) => (
-          <span key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i <= beatIdx ? "w-8 bg-mint-500" : "w-4 bg-ink-200"}`} />
+          <span key={i} className={`h-1.5 rounded-full transition-[width,background-color] duration-500 ${i <= beatIdx ? "w-8 bg-mint-500" : "w-4 bg-ink-200"}`} />
         ))}
       </div>
 
