@@ -1,0 +1,14 @@
+{
+  "id": "synopse-spike",
+  "name": "Synopse Spike F3",
+  "description": "Interception before-execution + validation Telegram (prototype jetable).",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  },
+  "activation": {
+    "onStartup": true
+  }
+}

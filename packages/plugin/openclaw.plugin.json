@@ -1,0 +1,14 @@
+{
+  "id": "synopse",
+  "name": "Synopse",
+  "description": "Filet de sécurité pour ton agent : validation des actions sensibles, kill switch, journal.",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  },
+  "activation": {
+    "onStartup": true
+  }
+}

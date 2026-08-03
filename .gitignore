@@ -1,17 +1,19 @@
-﻿# Clés API et secrets
+# Ancien projet n8n — ne jamais commiter
+synopse automatisation avant/
+
+# Secrets
 .env
-*.env
+.env.*
+!.env.example
 secrets.ps1
 
-# Exports n8n (backups locaux, pas versionnés)
-sandbox/_briques/exports/
-
-# Dossiers clients (données sensibles)
-clients/*/
-
-# Windows
-Thumbs.db
-desktop.ini
+# Node / build
+node_modules/
+.next/
+dist/
+.turbo/
+.vercel
 
 # Divers
+.DS_Store
 *.log

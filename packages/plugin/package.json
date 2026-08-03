@@ -1,0 +1,15 @@
+{
+  "name": "@synopse/plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Plugin OpenClaw Synopse — construit à l'étape 3 (F3 en dur → F1 pairing). Base validée par spike-f3/.",
+  "dependencies": {
+    "@synopse/shared": "workspace:*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.mjs"
+    ]
+  }
+}
