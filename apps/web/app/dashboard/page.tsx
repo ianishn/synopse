@@ -21,6 +21,8 @@ export default async function Dashboard() {
   const spendByAgent = Object.fromEntries((spend ?? []).map((s) => [s.agent_id, Number(s.est_cost_eur)]));
   const { data: sub } = await db.from("subscriptions").select("plan, status").eq("user_id", user.id).single();
   const plan = sub && sub.status !== "canceled" ? sub.plan : "free";
+  const { count: activeRules } = await db.from("rules")
+    .select("template_id", { count: "exact", head: true }).eq("user_id", user.id).eq("enabled", true);
 
   return (
     <div className="min-h-screen">
@@ -30,6 +32,7 @@ export default async function Dashboard() {
             synopse<span className="text-mint-500">.</span>
           </a>
           <div className="flex items-center gap-4 text-sm text-ink-500">
+            <a className="hover:text-ink-900" href="/dashboard/rules">Règles</a>
             <a className="hover:text-ink-900" href="/dashboard/journal">Journal</a>
             <form action="/auth/signout" method="post">
               <button className="hover:text-ink-900">Se déconnecter</button>
@@ -43,6 +46,23 @@ export default async function Dashboard() {
           <p className="mt-1 text-sm text-ink-500">Tes agents protégés, en un coup d&apos;œil.</p>
         </div>
         <AgentsPanel agents={agents ?? []} spendByAgent={spendByAgent} />
+
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">Règles</h2>
+          <a href="/dashboard/rules"
+            className="flex items-center justify-between rounded-2xl border border-ink-100 bg-paper p-5 transition hover:border-mint-400">
+            <div>
+              <p className="font-medium">
+                {activeRules ? `${activeRules} règle${activeRules > 1 ? "s" : ""} active${activeRules > 1 ? "s" : ""}` : "Aucune règle active"}
+              </p>
+              <p className="mt-1 text-sm text-ink-500">
+                {activeRules ? "Gère ce que ton agent doit te demander." : "Choisis en un clic ce que ton agent doit te demander."}
+              </p>
+            </div>
+            <span className="text-mint-500" aria-hidden>→</span>
+          </a>
+        </section>
+
         <BillingCard plan={plan} />
       </main>
     </div>

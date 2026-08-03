@@ -63,6 +63,13 @@ Deux chemins d'authentification, à ne jamais mélanger :
 - **Plafonds** (colonnes `agents.daily_budget_eur` / `monthly_budget_eur`, migration 0003) : à 80 % du budget jour → alerte Telegram (dédupliquée 1/jour via event `budget_alert`) ; à 100 % (jour ou mois) → règle système « tout en confirm » injectée dans la config compilée (l'etag change → le plugin l'applique en < 30 s).
 - **Usage tokens** : le plugin écoute le hook `llm_output` (usage.input/output). ⚠️ Ce hook ne se déclenche PAS en mode CLI embarqué (`agent --local`) — uniquement en mode gateway (le mode réel des clients). Vérifié côté serveur : l'agrégation `spend` et le calcul de coût sont corrects. À re-vérifier en gateway au moment du beta (étape 5).
 
+## 5quater. Gestion des règles (F2 UI, implémenté)
+
+- Écran `/dashboard/rules` : catalogue `RULES_CATALOG` (`packages/shared`) groupé par profil (Perso / Commerçant / Builder), toggles + bouton « Tout activer » par profil.
+- `POST /api/rules` `{ template_id, enabled }` : active/désactive une règle. Enable = insert/update `rules` (sévérité = défaut du template). Pas d'upsert (évite d'exiger une contrainte unique DB) : vérifier-puis-agir.
+- `POST /api/rules/profile` `{ profile }` : active toutes les règles du profil ; renvoie `activated_ids` (exact, pour l'UI) et `truncated` si le plan a bridé.
+- **Limite plan gratuit = 3 règles actives** (`lib/plan.ts` : `maxRules`), enforcée côté API (403 `code:"limit"`), pas seulement dans l'UI. Vérifié E2E : 3 OK / 4e refusée / désactivation libère un slot / activation de profil tronquée / Protégé lève la limite.
+
 ## 5ter. Billing (F8, implémenté)
 
 - Stripe **sans SDK** (`lib/stripe.ts`, fetch form-encodé). Produits/prix créés en test : Protégé 9 €/mois, Studio 19 €/mois (ids dans `.env.local`). À recréer en mode live avant lancement (mêmes commandes, clé live) — penser à activer **Stripe Tax** dans le dashboard.
