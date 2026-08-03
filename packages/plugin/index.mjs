@@ -26,6 +26,7 @@ const HEARTBEAT_MS = 5 * 60_000;
 let config = null; // dernière config compilée (mémoire)
 let frozen = false;
 let warnedNoToken = false;
+let lastStatusAt = 0; // dernier check de statut réussi (kill switch < 30 s)
 
 async function api(path, init = {}) {
   const res = await fetch(`${API}${path}`, {
@@ -98,6 +99,7 @@ async function heartbeatOnce() {
   try {
     const hb = await api("/api/agent/heartbeat", { method: "POST", body: "{}" });
     frozen = hb.agent_status === "frozen";
+    lastStatusAt = Date.now();
     if (hb.config_etag !== config?.etag) await syncConfig();
   } catch { /* offline : on garde l'état courant (frozen reste frozen) */ }
 }
@@ -120,6 +122,8 @@ export default definePluginEntry({
         if (!warnedNoToken) { console.warn("[synopse] SYNOPSE_AGENT_TOKEN absent — protection inactive"); warnedNoToken = true; }
         return;
       }
+      // Kill switch < 30 s : statut re-vérifié à chaque tool call si le dernier check date de > 25 s.
+      if (Date.now() - lastStatusAt > 25_000) await heartbeatOnce();
       if (frozen) {
         return { block: true, blockReason: "Synopse : agent gelé par son propriétaire (kill switch). Aucune action possible jusqu'au dégel." };
       }
@@ -150,6 +154,16 @@ export default definePluginEntry({
         // notify : on journalise et on laisse passer.
         postEvent("info", `Info — ${rule.label_fr} (outil ${event.toolName}${res.reason_fr ? ", " + res.reason_fr : ""})`);
       }
+    });
+
+    // F4 : remontée des compteurs de tokens (agrégés en `spend` côté serveur).
+    api_.on("llm_output", (event) => {
+      const u = event.usage;
+      if (!TOKEN || (!u?.input && !u?.output)) return;
+      api("/api/agent/events", {
+        method: "POST",
+        body: JSON.stringify({ events: [{ type: "usage", tokens_in: u.input ?? 0, tokens_out: u.output ?? 0, model: event.model }] }),
+      }).catch(() => {});
     });
   },
 });

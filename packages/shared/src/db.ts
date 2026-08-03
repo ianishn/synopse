@@ -19,6 +19,9 @@ export type Agent = {
   framework: string; // "openclaw" en V1
   last_heartbeat_at: string | null;
   status: AgentStatus;
+  /** Plafonds F4 — null = illimité. */
+  daily_budget_eur: number | null;
+  monthly_budget_eur: number | null;
   created_at: string;
 };
 

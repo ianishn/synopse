@@ -51,14 +51,17 @@ Deux chemins d'authentification, à ne jamais mélanger :
 
 **Fail-safe (invariant produit)** : plugin sans réseau ou API down ⇒ `block` bloque, `confirm` refuse. Jamais de fail-open. Timeout d'approbation (15 min) ⇒ refus.
 
-## 5. Jobs planifiés (Vercel Cron — à créer à l'étape F6/F7)
+## 5. Jobs planifiés
 
-| Job | Fréquence | Action |
-|---|---|---|
-| expiration approvals | 1 min | `pending` dépassant `expires_at` → `expired` + event |
-| check heartbeat | 1 min | `last_heartbeat_at` > 15 min → `status=silent` + alerte Telegram |
-| purge events | 1 jour | supprimer `events` > 90 j |
-| rapport hebdo | dim. 18h | agrégats → Telegram + Resend |
+- **`GET /api/cron/check`** (à la minute) fait tout : expiration des approvals (refus), détection heartbeat > 15 min (`silent` + alerte Telegram), purge events > 90 j. Auth : header Vercel Cron OU `Bearer CRON_SECRET`.
+- ⚠️ **Vercel Hobby limite les crons à 1/jour** : si le projet est en Hobby, brancher un pinger externe gratuit (cron-job.org, à la minute) sur l'URL avec le header `Authorization: Bearer <CRON_SECRET>`. `vercel.json` contient déjà l'entrée cron pour un éventuel plan Pro.
+- Rapport hebdo (F7) : job à ajouter (dim. 18h) — pas encore construit.
+
+## 5bis. Kill switch & plafonds (implémenté)
+
+- **Gel** : bouton dashboard (`POST /api/agents/:id/freeze`) ou message Telegram `STOP` (gèle tous les agents du compte lié ; `REPRISE` dégèle). Le plugin re-vérifie le statut à chaque tool call si le dernier check date de > 25 s → latence de gel < 30 s, conforme spec.
+- **Plafonds** (colonnes `agents.daily_budget_eur` / `monthly_budget_eur`, migration 0003) : à 80 % du budget jour → alerte Telegram (dédupliquée 1/jour via event `budget_alert`) ; à 100 % (jour ou mois) → règle système « tout en confirm » injectée dans la config compilée (l'etag change → le plugin l'applique en < 30 s).
+- **Usage tokens** : le plugin écoute le hook `llm_output` (usage.input/output). ⚠️ Ce hook ne se déclenche PAS en mode CLI embarqué (`agent --local`) — uniquement en mode gateway (le mode réel des clients). Vérifié côté serveur : l'agrégation `spend` et le calcul de coût sont corrects. À re-vérifier en gateway au moment du beta (étape 5).
 
 ## 6. Runbook — symptôme → diagnostic
 

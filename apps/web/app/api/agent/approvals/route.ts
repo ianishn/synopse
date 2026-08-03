@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     .from("approvals")
     .insert({
       agent_id: agent.id,
-      rule_id: body.rule_id || null,
+      // Les règles système (ex. "system-budget") n'existent pas en DB → rule_id null.
+      rule_id: /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(body.rule_id ?? "") ? body.rule_id : null,
       action_summary: body.action_summary.slice(0, 500),
       payload_encrypted: body.payload_json ? encryptPayload(body.payload_json.slice(0, 8000)) : null,
       expires_at,

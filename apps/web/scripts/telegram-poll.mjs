@@ -26,6 +26,17 @@ for (;;) {
   catch { await sleep(3000); continue; }
   for (const u of upd.result ?? []) {
     offset = u.update_id + 1;
+    // Kill switch dev : STOP/REPRISE (même logique que le webhook prod).
+    const cmd = u.message?.text?.trim().toUpperCase();
+    if (cmd === "STOP" || cmd === "REPRISE") {
+      const frozen = cmd === "STOP";
+      const us = await fetch(`${SB}/rest/v1/user_settings?telegram_chat_id=eq.${u.message.chat.id}&select=user_id`, { headers: H }).then((r) => r.json());
+      const uid = us[0]?.user_id;
+      const touched = uid ? await fetch(`${SB}/rest/v1/agents?user_id=eq.${uid}`, { method: "PATCH", headers: { ...H, Prefer: "return=representation" }, body: JSON.stringify({ status: frozen ? "frozen" : "active" }) }).then((r) => r.json()) : [];
+      await tg("sendMessage", { chat_id: u.message.chat.id, text: uid ? `${frozen ? "🧊" : "▶️"} ${touched.length} agent(s) ${frozen ? "gelé(s)" : "réactivé(s)"}.` : "Compte non relié." });
+      console.log(`${cmd}: ${touched.length} agents`);
+      continue;
+    }
     const cq = u.callback_query;
     if (!cq?.data?.startsWith("appr:")) continue;
     const [, id, verdict] = cq.data.split(":");

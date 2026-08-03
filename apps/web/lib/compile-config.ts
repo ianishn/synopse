@@ -29,6 +29,27 @@ export async function computeConfig(
       label_fr: r.rule_templates?.label_fr ?? String((r.params_json as { label_fr?: string })?.label_fr ?? "Règle personnalisée"),
     }));
 
+  // F4 : budget dépassé → règle système "tout en confirm" (matcher vide = matche tout).
+  // Incluse dans le body → l'etag change au franchissement → le plugin la récupère (≤ 30 s).
+  if (agent.daily_budget_eur || agent.monthly_budget_eur) {
+    const today = new Date().toISOString().slice(0, 10);
+    const monthStart = today.slice(0, 8) + "01";
+    const { data: rows } = await db.from("spend").select("day, est_cost_eur")
+      .eq("agent_id", agent.id).gte("day", monthStart);
+    const dayCost = (rows ?? []).filter((r: { day: string }) => r.day === today)
+      .reduce((s: number, r: { est_cost_eur: number }) => s + Number(r.est_cost_eur), 0);
+    const monthCost = (rows ?? []).reduce((s: number, r: { est_cost_eur: number }) => s + Number(r.est_cost_eur), 0);
+    if ((agent.daily_budget_eur && dayCost >= agent.daily_budget_eur) ||
+        (agent.monthly_budget_eur && monthCost >= agent.monthly_budget_eur)) {
+      compiled.unshift({
+        rule_id: "system-budget",
+        severity: "confirm",
+        matcher: {},
+        label_fr: "Budget dépassé — chaque action doit être validée",
+      });
+    }
+  }
+
   const body = {
     agent_status: agent.status,
     rules: compiled,
