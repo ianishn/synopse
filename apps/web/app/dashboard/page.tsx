@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { AgentsPanel } from "./agents-panel";
+import { BillingCard } from "./billing-card";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,8 @@ export default async function Dashboard() {
   const { data: spend } = await db.from("spend").select("agent_id, est_cost_eur")
     .eq("day", today).in("agent_id", (agents ?? []).map((a) => a.id));
   const spendByAgent = Object.fromEntries((spend ?? []).map((s) => [s.agent_id, Number(s.est_cost_eur)]));
+  const { data: sub } = await db.from("subscriptions").select("plan, status").eq("user_id", user.id).single();
+  const plan = sub && sub.status !== "canceled" ? sub.plan : "free";
 
   return (
     <main className="mx-auto mt-12 max-w-2xl space-y-6 p-6">
@@ -31,6 +34,7 @@ export default async function Dashboard() {
         </div>
       </div>
       <AgentsPanel agents={agents ?? []} spendByAgent={spendByAgent} />
+      <BillingCard plan={plan} />
     </main>
   );
 }

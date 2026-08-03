@@ -63,6 +63,13 @@ Deux chemins d'authentification, à ne jamais mélanger :
 - **Plafonds** (colonnes `agents.daily_budget_eur` / `monthly_budget_eur`, migration 0003) : à 80 % du budget jour → alerte Telegram (dédupliquée 1/jour via event `budget_alert`) ; à 100 % (jour ou mois) → règle système « tout en confirm » injectée dans la config compilée (l'etag change → le plugin l'applique en < 30 s).
 - **Usage tokens** : le plugin écoute le hook `llm_output` (usage.input/output). ⚠️ Ce hook ne se déclenche PAS en mode CLI embarqué (`agent --local`) — uniquement en mode gateway (le mode réel des clients). Vérifié côté serveur : l'agrégation `spend` et le calcul de coût sont corrects. À re-vérifier en gateway au moment du beta (étape 5).
 
+## 5ter. Billing (F8, implémenté)
+
+- Stripe **sans SDK** (`lib/stripe.ts`, fetch form-encodé). Produits/prix créés en test : Protégé 9 €/mois, Studio 19 €/mois (ids dans `.env.local`). À recréer en mode live avant lancement (mêmes commandes, clé live) — penser à activer **Stripe Tax** dans le dashboard.
+- Flux : `POST /api/billing/checkout` (session user → URL Stripe Checkout) ; `POST /api/billing/portal` (gérer/annuler) ; `POST /api/stripe/webhook` → table `subscriptions` (source de vérité : Stripe ; `deleted`/inactif ⇒ retour plan free).
+- ⚠️ Webhook : en prod, créer l'endpoint dans Stripe Dashboard et renseigner `STRIPE_WEBHOOK_SECRET` dans Vercel — sans lui, la signature n'est PAS vérifiée (toléré uniquement en dev local).
+- Enforcement des limites : côté API (`/api/pairing` : 1 agent en free/protégé, 5 en studio). Limite « 3 règles en gratuit » : à brancher dans la future route de gestion des règles (UI règles pas encore construite).
+
 ## 6. Runbook — symptôme → diagnostic
 
 - **Un user ne voit aucune donnée** : vérifier la session (cookies) ; si connecté, suspecter une policy RLS (tester la requête dans SQL Editor avec `set role authenticated; set request.jwt.claims...`).
