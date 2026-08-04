@@ -9,7 +9,9 @@ import { Reveal } from "./reveal";
 import { Counter } from "./counter";
 import { Pricing } from "./pricing";
 import { COPY, type Lang } from "./copy";
-import { AuroraBackground } from "./aurora-bg";
+import { FallingPattern } from "@/components/ui/falling-pattern";
+import { ButtonColorful } from "@/components/ui/button-colorful";
+import { OrbitingAgents } from "@/components/ui/orbiting-agents";
 import { Logo, LogoIcon } from "../logo";
 
 const CTA =
@@ -20,7 +22,7 @@ export function Landing({ lang }: { lang: Lang }) {
 
   return (
     <div className="relative min-h-screen text-off">
-      <AuroraBackground className="fixed inset-0 -z-10" />
+      <FallingPattern className="fixed inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
       <LandingAnalytics />
 
       {/* Header */}
@@ -58,7 +60,7 @@ export function Landing({ lang }: { lang: Lang }) {
               <p className="mt-6 max-w-md text-lg text-s400">{t.hero.sub}</p>
             </Reveal>
             <Reveal delay={240}>
-              <div className="mt-8"><CtaLink place="hero" className={CTA}>{t.hero.cta} <span aria-hidden>→</span></CtaLink></div>
+              <div className="mt-8"><ButtonColorful href="/login" label={t.hero.cta} /></div>
               <p className="mt-3 text-sm text-muted">{t.hero.trust}</p>
             </Reveal>
           </div>
@@ -122,6 +124,24 @@ export function Landing({ lang }: { lang: Lang }) {
         </div>
       </section>
 
+      {/* 3bis · Orbites : Synopse au centre, les agents autour */}
+      <section data-section="agents" className="relative overflow-hidden px-6 pt-20">
+        <div className="mx-auto max-w-5xl text-center">
+          <Reveal>
+            <p className="eyebrow">{lang === "fr" ? "Un noyau, tous tes agents" : "One core, all your agents"}</p>
+            <h2 className="mt-4 text-3xl font-bold">
+              {lang === "fr" ? "Synopse surveille, ils travaillent." : "Synopse watches, they work."}
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-s400">
+              {lang === "fr"
+                ? "OpenClaw aujourd'hui. Les autres frameworks arrivent : le besoin de contrôle leur survivra."
+                : "OpenClaw today. Other frameworks are coming: the need for control will outlive them."}
+            </p>
+          </Reveal>
+          <Reveal delay={120}><OrbitingAgents /></Reveal>
+        </div>
+      </section>
+
       {/* 4 · Preuve sociale */}
       <section data-section="proof" className="border-y border-line-soft bg-void-2 px-6 py-20 text-center">
         <Reveal>
@@ -170,7 +190,7 @@ export function Landing({ lang }: { lang: Lang }) {
           <div className="relative">
             <LogoIcon className="mx-auto" size={48} />
             <h2 className="mt-6 text-3xl font-bold">{t.final.title[0]}<br /><span className="text-s400">{t.final.title[1]}</span></h2>
-            <div className="mt-9"><CtaLink place="final" className={CTA}>{t.final.cta} <span aria-hidden>→</span></CtaLink></div>
+            <div className="mt-9 flex justify-center"><ButtonColorful href="/login" label={t.final.cta} /></div>
           </div>
         </Reveal>
       </section>
