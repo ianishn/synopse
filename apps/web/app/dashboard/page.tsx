@@ -38,6 +38,7 @@ export default async function Dashboard() {
             {admin && <a className="font-medium text-orange hover:text-orange-bright" href="/admin">Admin</a>}
             <a className="hover:text-ink-900" href="/dashboard/rules">Règles</a>
             <a className="hover:text-ink-900" href="/dashboard/journal">Journal</a>
+            <a className="hover:text-ink-900" href="/dashboard/account">Compte</a>
             <form action="/auth/signout" method="post">
               <button className="hover:text-ink-900">Se déconnecter</button>
             </form>
