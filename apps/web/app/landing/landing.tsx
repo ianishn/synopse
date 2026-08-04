@@ -9,7 +9,7 @@ import { Reveal } from "./reveal";
 import { Counter } from "./counter";
 import { Pricing } from "./pricing";
 import { COPY, type Lang } from "./copy";
-import { ShaderBackground } from "./shader-bg";
+import { AuroraBackground } from "./aurora-bg";
 import { Logo, LogoIcon } from "../logo";
 
 const CTA =
@@ -20,7 +20,7 @@ export function Landing({ lang }: { lang: Lang }) {
 
   return (
     <div className="relative min-h-screen text-off">
-      <ShaderBackground className="fixed inset-0 -z-10 h-screen w-screen" />
+      <AuroraBackground className="fixed inset-0 -z-10" />
       <LandingAnalytics />
 
       {/* Header */}
