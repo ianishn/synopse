@@ -1,5 +1,5 @@
 /**
- * POST /api/billing/cancel — résilie l'abonnement de l'utilisateur EN FIN DE PÉRIODE
+ * POST /api/billing/cancel, résilie l'abonnement de l'utilisateur EN FIN DE PÉRIODE
  * (accès conservé jusqu'à la date déjà payée). Le webhook Stripe mettra à jour la DB.
  */
 import { NextResponse } from "next/server";

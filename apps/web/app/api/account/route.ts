@@ -1,5 +1,5 @@
 /**
- * DELETE /api/account — supprime le compte de l'utilisateur connecté.
+ * DELETE /api/account, supprime le compte de l'utilisateur connecté.
  * Annule d'abord tout abonnement Stripe (pour ne plus facturer), puis supprime l'utilisateur
  * Auth (cascade DB : agents, règles, abonnements, events… partent via FK on delete cascade).
  */
