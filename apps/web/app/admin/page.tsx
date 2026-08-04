@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { isAdmin, PLAN_MONTHLY_EUR } from "@/lib/admin";
 import { EvolutionChart } from "./chart";
+import { PlanControl } from "./plan-control";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +64,10 @@ export default async function AdminPage() {
       <header className="border-b border-ink-100">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <a href="/dashboard" className="font-display text-lg font-bold tracking-tight text-off">synopse<span className="text-orange">.</span> <span className="text-ink-400">admin</span></a>
-          <a className="text-sm text-ink-400 hover:text-off" href="/dashboard">← Tableau de bord</a>
+          <div className="flex items-center gap-4 text-sm text-ink-400">
+            <a className="hover:text-off" href="https://supabase.com/dashboard/project/stxgjsiesofubytmjiie" target="_blank" rel="noreferrer">Supabase ↗</a>
+            <a className="hover:text-off" href="/dashboard">← Tableau de bord</a>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-5xl space-y-8 px-6 py-10">
@@ -107,7 +111,7 @@ export default async function AdminPage() {
                 <tr>
                   <th className="px-4 py-3 font-medium">Email</th>
                   <th className="px-4 py-3 font-medium">Inscrit le</th>
-                  <th className="px-4 py-3 font-medium">Forfait</th>
+                  <th className="px-4 py-3 font-medium">Forfait (test : cliquer pour changer)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-ink-100">
@@ -120,9 +124,7 @@ export default async function AdminPage() {
                         <td className="px-4 py-3">{u.email}</td>
                         <td className="px-4 py-3 text-ink-400">{new Date(u.created_at).toLocaleDateString("fr-FR")}</td>
                         <td className="px-4 py-3">
-                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${p === "free" ? "bg-ink-100 text-ink-400" : "bg-[var(--orange-soft)] text-orange"}`}>
-                            {p === "free" ? "Gratuit" : p === "protege" ? "Protégé" : "Studio"}
-                          </span>
+                          <PlanControl userId={u.id} plan={p} />
                         </td>
                       </tr>
                     );
