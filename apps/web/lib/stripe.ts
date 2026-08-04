@@ -22,9 +22,18 @@ export async function stripe(path: string, params?: Record<string, string>): Pro
 }
 
 export function planFromPriceId(priceId: string): "protege" | "studio" | "free" {
-  if (priceId === process.env.STRIPE_PRICE_PROTEGE) return "protege";
-  if (priceId === process.env.STRIPE_PRICE_STUDIO) return "studio";
+  if (priceId === process.env.STRIPE_PRICE_PROTEGE || priceId === process.env.STRIPE_PRICE_PROTEGE_ANNUAL) return "protege";
+  if (priceId === process.env.STRIPE_PRICE_STUDIO || priceId === process.env.STRIPE_PRICE_STUDIO_ANNUAL) return "studio";
   return "free";
+}
+
+/** Résout l'ID de prix Stripe pour un plan + un intervalle. */
+export function priceIdFor(plan: string, interval: "monthly" | "annual"): string | undefined {
+  const map: Record<string, { monthly?: string; annual?: string }> = {
+    protege: { monthly: process.env.STRIPE_PRICE_PROTEGE, annual: process.env.STRIPE_PRICE_PROTEGE_ANNUAL },
+    studio: { monthly: process.env.STRIPE_PRICE_STUDIO, annual: process.env.STRIPE_PRICE_STUDIO_ANNUAL },
+  };
+  return map[plan]?.[interval];
 }
 
 /** Vérifie l'en-tête Stripe-Signature (schéma t=...,v1=HMAC-SHA256("t.payload")). */

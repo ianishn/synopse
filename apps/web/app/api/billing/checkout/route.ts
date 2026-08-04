@@ -1,14 +1,14 @@
-/** POST /api/billing/checkout, body { plan: "protege"|"studio" } → { url } (Stripe Checkout). */
+/** POST /api/billing/checkout, body { plan, interval? } → { url } (Stripe Checkout). */
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripe";
+import { stripe, priceIdFor } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  const { plan } = await request.json().catch(() => ({}));
-  const price = plan === "studio" ? process.env.STRIPE_PRICE_STUDIO : process.env.STRIPE_PRICE_PROTEGE;
+  const { plan, interval } = await request.json().catch(() => ({}));
+  const price = priceIdFor(plan, interval === "annual" ? "annual" : "monthly");
   if (!price) return NextResponse.json({ error: "prix non configuré" }, { status: 500 });
 
   // Réutilise le customer Stripe existant (évite les doublons au 2e passage).

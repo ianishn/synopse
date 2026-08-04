@@ -4,6 +4,7 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { AgentsPanel } from "./agents-panel";
 import { BillingCard } from "./billing-card";
 import { TutorialModal } from "./tutorial-modal";
+import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export default async function Dashboard() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+  const admin = isAdmin(user.email);
 
   const db = createServiceClient();
   const { data: agents } = await db.from("agents")
@@ -30,9 +32,10 @@ export default async function Dashboard() {
       <header className="border-b border-ink-100">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-6 py-4">
           <a href="/dashboard" className="font-display text-lg font-bold tracking-tight">
-            synopse<span className="text-mint-500">.</span>
+            synopse<span className="text-orange">.</span>
           </a>
           <div className="flex items-center gap-4 text-sm text-ink-500">
+            {admin && <a className="font-medium text-orange hover:text-orange-bright" href="/admin">Admin</a>}
             <a className="hover:text-ink-900" href="/dashboard/rules">Règles</a>
             <a className="hover:text-ink-900" href="/dashboard/journal">Journal</a>
             <form action="/auth/signout" method="post">
