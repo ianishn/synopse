@@ -10,9 +10,11 @@ import { Counter } from "./counter";
 import { Pricing } from "./pricing";
 import { COPY, type Lang } from "./copy";
 import { GlowCard } from "@/components/ui/glow-card";
+import { BorderBeam } from "@/components/ui/border-beam";
 import { FallingPattern } from "@/components/ui/falling-pattern";
 import { ButtonColorful } from "@/components/ui/button-colorful";
 import { OrbitingAgents } from "@/components/ui/orbiting-agents";
+import { AttackChains } from "./attack-chains";
 import { Logo, LogoIcon } from "../logo";
 
 const CTA =
@@ -89,35 +91,26 @@ export function Landing({ lang }: { lang: Lang }) {
             </div>
           </Reveal>
 
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {t.fears.cards.map(([title, desc], i) => (
-              <Reveal key={title} delay={i * 90}>
-                <GlowCard><div className="p-7">
-                  <p className="font-mono text-sm text-orange">0{i + 1}</p>
-                  <h3 className="mt-3 text-lg font-semibold text-off">{title}</h3>
-                  <p className="mt-2 text-[0.95rem] leading-relaxed text-s400">{desc}</p>
-                </div></GlowCard>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal delay={140}><AttackChains lang={lang} /></Reveal>
         </div>
       </section>
 
-      {/* 3 · Comment ça marche */}
-      <section data-section="how" className="px-6 py-24">
+      {/* 3 · Comment ça marche, SECTION INVERSÉE (contraste : fond clair, encre sombre) */}
+      <section data-section="how" className="relative bg-off px-6 py-24 text-[#0f172a]">
         <div className="mx-auto max-w-5xl text-center">
           <Reveal>
-            <p className="eyebrow">{t.how.eyebrow}</p>
+            <p className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-orange">{t.how.eyebrow}</p>
             <h2 className="mt-4 text-3xl font-bold">{t.how.title}</h2>
           </Reveal>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {t.how.steps.map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <GlowCard><div className="p-7 text-left">
+                <div className="relative h-full overflow-hidden rounded-2xl border border-[#0f172a]/12 bg-white p-7 text-left shadow-[0_10px_30px_-18px_rgba(15,23,42,0.4)] transition duration-300 hover:-translate-y-1">
+                  {i === 1 && <BorderBeam duration={10} borderWidth={2} />}
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--orange-soft)] font-mono text-sm font-medium text-orange">{i + 1}</span>
-                  <h3 className="mt-4 font-semibold text-off">{title}</h3>
-                  <p className="mt-2 text-[0.95rem] text-s400">{desc}</p>
-                </div></GlowCard>
+                  <h3 className="mt-4 font-semibold">{title}</h3>
+                  <p className="mt-2 text-[0.95rem] text-[#334155]">{desc}</p>
+                </div>
               </Reveal>
             ))}
           </div>

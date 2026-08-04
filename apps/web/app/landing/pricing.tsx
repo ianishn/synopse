@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CtaLink } from "./analytics";
 import { COPY, type Lang } from "./copy";
 import { GlowCard } from "@/components/ui/glow-card";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 export function Pricing({ lang = "fr" }: { lang?: Lang }) {
   const t = COPY[lang].pricing;
@@ -27,6 +28,7 @@ export function Pricing({ lang = "fr" }: { lang?: Lang }) {
           const star = i === 1;
           return (
             <GlowCard key={p.name} featured={star} className={star ? "md:-translate-y-2" : ""}>
+            {star && <BorderBeam duration={9} borderWidth={2} />}
             <div className="p-7">
               {star && <p className="eyebrow mb-3">{t.recommended}</p>}
               <h3 className="text-lg font-semibold text-off">{p.name}</h3>
