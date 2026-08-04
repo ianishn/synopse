@@ -9,6 +9,7 @@ import { Reveal } from "./reveal";
 import { Counter } from "./counter";
 import { Pricing } from "./pricing";
 import { COPY, type Lang } from "./copy";
+import { ShaderBackground } from "./shader-bg";
 import { Logo, LogoIcon } from "../logo";
 
 const CTA =
@@ -18,7 +19,8 @@ export function Landing({ lang }: { lang: Lang }) {
   const t = COPY[lang];
 
   return (
-    <div className="min-h-screen bg-void text-off">
+    <div className="relative min-h-screen text-off">
+      <ShaderBackground className="fixed inset-0 -z-10 h-screen w-screen" />
       <LandingAnalytics />
 
       {/* Header */}
@@ -36,10 +38,9 @@ export function Landing({ lang }: { lang: Lang }) {
         </div>
       </header>
 
-      {/* 1 · Hero, démo-first, image de fond sombre */}
+      {/* 1 · Hero, démo-first, fond shader WebGL animé (voir ShaderBackground) */}
       <section data-section="hero" className="relative overflow-hidden px-6 pb-24 pt-14">
-        <div className="pointer-events-none absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero-bg.webp)" }} aria-hidden />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-void/50 via-void/75 to-void" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-void" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
           <div>
             <Reveal>
