@@ -11,6 +11,15 @@ Tout est committé sur `main` (prod) et `build-v1`. Landing + app entièrement e
 3. **Checkout annuel** : bascule mensuel/annuel dans la carte billing + landing. Prix Stripe
    annuels créés (Protégé 90 €, Studio 190 €).
 
+## Tableau de bord « salle de contrôle » (fait, charte exacte)
+Refonte complète du dashboard (`/dashboard`) en 8 modules : en-tête d'état, actions en attente
+(temps réel Supabase Realtime + décision web symétrique à Telegram), agents + métriques 30 j,
+règles actives (toggles + compteurs), dépenses & plafond (graphe par jour + réglage), kill switch
++ bandeau d'alerte permanent, journal, compte & abonnement (récap offres, bascule mensuel/annuel).
+Charte V1.0 exacte (5 couleurs + statuts vert/ambre/rouge), grille technique, monospace pour les données.
+⚠️ **Appliquer `supabase/migrations/0006_realtime.sql`** pour que le temps réel pousse les nouvelles
+approbations sans rechargement (sinon elles apparaissent au chargement de la page, décisions OK).
+
 ## ⚠️ À FAIRE pour activer en prod (actions manuelles)
 1. **Migration Supabase** : appliquer `supabase/migrations/0005_subscriptions_created_at.sql`
    (SQL Editor). Sans elle, l'admin affiche tout le monde en "Gratuit" et 0 € de revenus.
