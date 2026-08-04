@@ -22,7 +22,7 @@ export function Landing({ lang }: { lang: Lang }) {
 
   return (
     <div className="relative min-h-screen text-off">
-      <FallingPattern className="fixed inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
+      <FallingPattern className="fixed inset-0 -z-10" />
       <LandingAnalytics />
 
       {/* Header */}
@@ -40,9 +40,8 @@ export function Landing({ lang }: { lang: Lang }) {
         </div>
       </header>
 
-      {/* 1 · Hero, démo-first, fond shader WebGL animé (voir ShaderBackground) */}
+      {/* 1 · Hero, démo-first, fond falling pattern visible (voir FallingPattern) */}
       <section data-section="hero" className="relative overflow-hidden px-6 pb-24 pt-14">
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-void" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
           <div>
             <Reveal>
@@ -69,7 +68,7 @@ export function Landing({ lang }: { lang: Lang }) {
       </section>
 
       {/* 2 · La peur, légitimée */}
-      <section data-section="fears" className="border-y border-line-soft bg-void-2 px-6 py-24">
+      <section data-section="fears" className="border-y border-line-soft bg-void-2/75 px-6 backdrop-blur-sm py-24">
         <div className="mx-auto max-w-5xl">
           <Reveal>
             <p className="eyebrow text-center">{t.fears.eyebrow}</p>
@@ -78,11 +77,11 @@ export function Landing({ lang }: { lang: Lang }) {
 
           <Reveal delay={100}>
             <div className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-4 text-center">
-              <div className="rounded-2xl border border-line bg-surface p-6">
+              <div className="rounded-2xl border border-line bg-surface/85 p-6">
                 <p className="font-display text-4xl font-bold text-orange"><Counter value={94} suffix=" %" /></p>
                 <p className="mt-1 text-sm text-s400">{t.fears.stat1}</p>
               </div>
-              <div className="rounded-2xl border border-line bg-surface p-6">
+              <div className="rounded-2xl border border-line bg-surface/85 p-6">
                 <p className="font-display text-4xl font-bold text-orange"><Counter value={78} suffix=" %" /></p>
                 <p className="mt-1 text-sm text-s400">{t.fears.stat2}</p>
               </div>
@@ -92,7 +91,7 @@ export function Landing({ lang }: { lang: Lang }) {
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {t.fears.cards.map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="h-full rounded-2xl border border-line bg-surface p-7 transition duration-300 hover:-translate-y-1 hover:border-orange/50">
+                <div className="h-full rounded-2xl border border-line bg-surface/85 p-7 transition duration-300 hover:-translate-y-1 hover:border-orange/50">
                   <p className="font-mono text-sm text-orange">0{i + 1}</p>
                   <h3 className="mt-3 text-lg font-semibold text-off">{title}</h3>
                   <p className="mt-2 text-[0.95rem] leading-relaxed text-s400">{desc}</p>
@@ -113,7 +112,7 @@ export function Landing({ lang }: { lang: Lang }) {
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {t.how.steps.map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="relative h-full rounded-2xl border border-line bg-surface p-7 text-left transition duration-300 hover:-translate-y-1 hover:border-orange/50">
+                <div className="relative h-full rounded-2xl border border-line bg-surface/85 p-7 text-left transition duration-300 hover:-translate-y-1 hover:border-orange/50">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--orange-soft)] font-mono text-sm font-medium text-orange">{i + 1}</span>
                   <h3 className="mt-4 font-semibold text-off">{title}</h3>
                   <p className="mt-2 text-[0.95rem] text-s400">{desc}</p>
@@ -143,7 +142,7 @@ export function Landing({ lang }: { lang: Lang }) {
       </section>
 
       {/* 4 · Preuve sociale */}
-      <section data-section="proof" className="border-y border-line-soft bg-void-2 px-6 py-20 text-center">
+      <section data-section="proof" className="border-y border-line-soft bg-void-2/75 px-6 backdrop-blur-sm py-20 text-center">
         <Reveal>
           <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-s300">
             {t.proof.badges.map((b) => (

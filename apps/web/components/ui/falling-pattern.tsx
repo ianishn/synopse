@@ -10,17 +10,21 @@ import { cn } from "@/lib/utils";
 type FallingPatternProps = React.ComponentProps<"div"> & {
   color?: string;
   backgroundColor?: string;
+  /** Durée d'un cycle de chute (s). Plus bas = plus rapide. */
   duration?: number;
   blurIntensity?: string;
   density?: number;
+  /** Rayon des trous du voile (px) : plus grand = motif plus visible. */
+  dotSize?: number;
 };
 
 export function FallingPattern({
-  color = "var(--orange)",
+  color = "var(--orange-bright)",
   backgroundColor = "var(--void)",
-  duration = 150,
-  blurIntensity = "1em",
+  duration = 26,
+  blurIntensity = "0.35em",
   density = 1,
+  dotSize = 3.2,
   className,
 }: FallingPatternProps) {
   const rows = [235, 252, 150, 253, 204, 134, 179, 299, 215, 281, 158, 210];
@@ -60,7 +64,7 @@ export function FallingPattern({
         className="absolute inset-0 z-[1]"
         style={{
           backdropFilter: `blur(${blurIntensity})`,
-          backgroundImage: `radial-gradient(circle at 50% 50%, transparent 0, transparent 2px, ${backgroundColor} 2px)`,
+          backgroundImage: `radial-gradient(circle at 50% 50%, transparent 0, transparent ${dotSize}px, ${backgroundColor} ${dotSize}px)`,
           backgroundSize: `${8 * density}px ${8 * density}px`,
         }}
       />
