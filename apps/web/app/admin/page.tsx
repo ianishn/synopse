@@ -1,5 +1,5 @@
 /**
- * Interface admin (/admin) — accès réservé (ADMIN_EMAILS).
+ * Interface admin (/admin), accès réservé (ADMIN_EMAILS).
  * Users + emails, abonnements, revenus (MRR/ARR estimés), répartition par forfait,
  * courbe d'évolution dans le temps.
  */
