@@ -27,8 +27,8 @@ export async function POST(request: Request) {
     customer,
     "line_items[0][price]": price,
     "line_items[0][quantity]": "1",
-    success_url: `${origin}/dashboard?upgraded=1`,
-    cancel_url: `${origin}/dashboard`,
+    success_url: `${origin}/dashboard/bienvenue?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/dashboard/account/billing`,
     "metadata[user_id]": user.id,
     "subscription_data[metadata][user_id]": user.id,
   });
