@@ -1,4 +1,4 @@
-/** POST /api/billing/checkout — body { plan: "protege"|"studio" } → { url } (Stripe Checkout). */
+/** POST /api/billing/checkout, body { plan: "protege"|"studio" } → { url } (Stripe Checkout). */
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";

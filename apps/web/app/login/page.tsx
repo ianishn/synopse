@@ -72,7 +72,7 @@ export default function LoginPage() {
           {mode === "signin" ? "Ravi de te revoir" : "Protège ton agent"}
         </h1>
         <p className="mt-1 text-sm text-ink-500">
-          {mode === "signin" ? "Connecte-toi à ton tableau de bord." : "Crée ton compte gratuit — aucune carte requise."}
+          {mode === "signin" ? "Connecte-toi à ton tableau de bord." : "Crée ton compte gratuit, aucune carte requise."}
         </p>
 
         <form onSubmit={submit} className="mt-8 space-y-3">

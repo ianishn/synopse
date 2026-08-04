@@ -1,4 +1,4 @@
-/** GET /api/agent/approvals/:id — polling du verdict. Expiration paresseuse (le cron F6 fera le reste). */
+/** GET /api/agent/approvals/:id, polling du verdict. Expiration paresseuse (le cron F6 fera le reste). */
 import { NextResponse } from "next/server";
 import { authAgent } from "@/lib/agent-auth";
 import { createServiceClient } from "@/lib/supabase/server";

@@ -1,5 +1,5 @@
 /**
- * GET /api/cron/weekly — rapport hebdo (F7), dimanche 18h (vercel.json / pinger externe).
+ * GET /api/cron/weekly, rapport hebdo (F7), dimanche 18h (vercel.json / pinger externe).
  * Par user : agrégats 7 jours → Telegram (+ email Resend si RESEND_API_KEY présent).
  * Le rapport est le rituel anti-churn : chaque « tentative bloquée » = un renouvellement.
  */
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     const cost = (spend ?? []).reduce((s, r) => s + Number(r.est_cost_eur), 0);
     const text =
       `📊 Ton rapport Synopse de la semaine\n\n` +
-      `🛡️ ${blocked} action(s) bloquée(s)${blocked ? " — ton filet a servi !" : ""}\n` +
+      `🛡️ ${blocked} action(s) bloquée(s)${blocked ? ", ton filet a servi !" : ""}\n` +
       `✅ ${count("approved")} validée(s) par toi · ❌ ${count("denied")} refusée(s)\n` +
       `💶 Coût estimé : ${cost.toFixed(2)} €\n\n` +
       `Détail : https://www.synopse.eu/dashboard/journal`;
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     const chatId = await chatIdForUser(db, userId);
     if (chatId) { await tg("sendMessage", { chat_id: chatId, text }).catch(() => {}); sent++; }
 
-    // Email optionnel (Resend) — activé dès que RESEND_API_KEY existe.
+    // Email optionnel (Resend), activé dès que RESEND_API_KEY existe.
     if (process.env.RESEND_API_KEY) {
       const { data: u } = await db.auth.admin.getUserById(userId);
       if (u?.user?.email) {
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
           body: JSON.stringify({
             from: "Synopse <rapport@synopse.eu>",
             to: u.user.email,
-            subject: `Ton rapport Synopse — ${blocked} action(s) bloquée(s) cette semaine`,
+            subject: `Ton rapport Synopse, ${blocked} action(s) bloquée(s) cette semaine`,
             html: text.replace(/\n/g, "<br>"),
           }),
         }).catch(() => {});

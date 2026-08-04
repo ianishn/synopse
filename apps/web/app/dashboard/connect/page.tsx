@@ -1,4 +1,4 @@
-/** Page connecteur (F1) — génère un token de pairing et guide la connexion de l'agent. */
+/** Page connecteur (F1), génère un token de pairing et guide la connexion de l'agent. */
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ConnectFlow } from "./connect-flow";

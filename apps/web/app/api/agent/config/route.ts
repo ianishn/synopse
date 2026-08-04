@@ -1,4 +1,4 @@
-/** GET /api/agent/config — règles compilées, 304 si If-None-Match inchangé. */
+/** GET /api/agent/config, règles compilées, 304 si If-None-Match inchangé. */
 import { NextResponse } from "next/server";
 import { authAgent } from "@/lib/agent-auth";
 import { createServiceClient } from "@/lib/supabase/server";

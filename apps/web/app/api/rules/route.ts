@@ -1,5 +1,5 @@
 /**
- * POST /api/rules — active/désactive une règle (par template). Body : { template_id, enabled }.
+ * POST /api/rules, active/désactive une règle (par template). Body : { template_id, enabled }.
  * Enable = upsert enabled:true (sévérité = défaut du template). Disable = enabled:false.
  * Limite plan gratuit : 3 règles actives max (enforcée ici, pas seulement dans l'UI).
  */

@@ -25,11 +25,11 @@ export function BillingCard({ plan }: { plan: string }) {
             <>
               <button disabled={busy} onClick={() => go("/api/billing/checkout", { plan: "protege" })}
                 className="rounded-full bg-ink-950 px-4 py-2 font-medium text-white transition hover:bg-ink-700 disabled:opacity-50">
-                Passer à Protégé — 9 €
+                Passer à Protégé, 9 €
               </button>
               <button disabled={busy} onClick={() => go("/api/billing/checkout", { plan: "studio" })}
                 className="rounded-full border border-ink-200 px-4 py-2 font-medium transition hover:border-ink-400 disabled:opacity-50">
-                Studio — 19 €
+                Studio, 19 €
               </button>
             </>
           ) : (

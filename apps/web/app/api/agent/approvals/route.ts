@@ -1,4 +1,4 @@
-/** POST /api/agent/approvals — crée la demande, chiffre le payload, notifie Telegram. */
+/** POST /api/agent/approvals, crée la demande, chiffre le payload, notifie Telegram. */
 import { NextResponse } from "next/server";
 import { authAgent, encryptPayload } from "@/lib/agent-auth";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   await db.from("events").insert({
     agent_id: agent.id, type: "info",
-    summary_fr: `Validation demandée — ${body.action_summary.slice(0, 200)}`,
+    summary_fr: `Validation demandée, ${body.action_summary.slice(0, 200)}`,
   });
 
   // Notification best-effort : si Telegram échoue, la demande expire d'elle-même (refus par défaut).

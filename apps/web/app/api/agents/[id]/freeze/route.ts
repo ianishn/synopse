@@ -1,4 +1,4 @@
-/** POST /api/agents/:id/freeze — kill switch web (session). Body: { frozen: boolean }. */
+/** POST /api/agents/:id/freeze, kill switch web (session). Body: { frozen: boolean }. */
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 

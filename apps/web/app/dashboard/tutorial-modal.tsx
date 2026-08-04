@@ -16,7 +16,7 @@ const STEPS: Step[] = [
       <div className="space-y-2">
         <code className="pop-in block rounded-lg bg-ink-950 p-2 font-mono text-[0.7rem] text-mint-300">SYNOPSE_AGENT_TOKEN=syn_••••</code>
         <p className="pop-in flex items-center gap-2 text-sm text-mint-500" style={{ animationDelay: "0.4s" }}>
-          <span className="h-2 w-2 rounded-full bg-mint-500" /> Plugin activé — agent connecté
+          <span className="h-2 w-2 rounded-full bg-mint-500" /> Plugin activé, agent connecté
         </p>
       </div>
     ),

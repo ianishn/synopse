@@ -1,5 +1,5 @@
 /**
- * POST /api/stripe/webhook — synchronise `subscriptions` (source de vérité : Stripe).
+ * POST /api/stripe/webhook, synchronise `subscriptions` (source de vérité : Stripe).
  * Événements gérés : checkout.session.completed, customer.subscription.updated/deleted.
  * Prod : configurer l'endpoint dans Stripe Dashboard + STRIPE_WEBHOOK_SECRET dans Vercel.
  */
@@ -16,10 +16,10 @@ export async function POST(request: Request) {
     }
   } else if (process.env.NODE_ENV === "production") {
     // Fail-closed : sans secret en prod, on REFUSE (sinon un événement forgé = escalade de plan).
-    console.error("[stripe] STRIPE_WEBHOOK_SECRET manquant en production — webhook refusé");
+    console.error("[stripe] STRIPE_WEBHOOK_SECRET manquant en production, webhook refusé");
     return NextResponse.json({ error: "webhook not configured" }, { status: 500 });
   } else {
-    console.warn("[stripe] STRIPE_WEBHOOK_SECRET absent — signature non vérifiée (dev uniquement)");
+    console.warn("[stripe] STRIPE_WEBHOOK_SECRET absent, signature non vérifiée (dev uniquement)");
   }
 
   const event = JSON.parse(payload);

@@ -1,4 +1,4 @@
-/** GET /api/agents — liste les agents de l'utilisateur connecté (statut de connexion en direct). */
+/** GET /api/agents, liste les agents de l'utilisateur connecté (statut de connexion en direct). */
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 

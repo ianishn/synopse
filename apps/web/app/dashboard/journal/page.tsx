@@ -1,4 +1,4 @@
-/** Journal lisible (F7) — événements 90 j, filtre par type via ?f=bloque|valide|info. */
+/** Journal lisible (F7), événements 90 j, filtre par type via ?f=bloque|valide|info. */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";

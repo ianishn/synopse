@@ -1,4 +1,4 @@
-export const metadata = { title: "CGV — Synopse" };
+export const metadata = { title: "CGV, Synopse" };
 export default function Page() {
   return (
     <>

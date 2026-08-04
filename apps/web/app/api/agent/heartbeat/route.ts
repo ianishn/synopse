@@ -1,4 +1,4 @@
-/** POST /api/agent/heartbeat — vivant + statut (kill switch) + etag config. */
+/** POST /api/agent/heartbeat, vivant + statut (kill switch) + etag config. */
 import { NextResponse } from "next/server";
 import { authAgent } from "@/lib/agent-auth";
 import { createServiceClient } from "@/lib/supabase/server";

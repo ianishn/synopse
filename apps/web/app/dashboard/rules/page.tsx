@@ -1,4 +1,4 @@
-/** Gestion des règles (F2) — catalogue FR groupé par profil, activation en un clic. */
+/** Gestion des règles (F2), catalogue FR groupé par profil, activation en un clic. */
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { RULES_CATALOG } from "@synopse/shared";

@@ -1,4 +1,4 @@
-/** Page tuto — ouvre d'emblée la pop-up tutoriel animée (connecter + gérer). */
+/** Page tuto, ouvre d'emblée la pop-up tutoriel animée (connecter + gérer). */
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TutorialModal } from "../tutorial-modal";

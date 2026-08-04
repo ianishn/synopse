@@ -1,5 +1,5 @@
 /**
- * GET /api/cron/check — job de surveillance (F6), à appeler toutes les minutes.
+ * GET /api/cron/check, job de surveillance (F6), à appeler toutes les minutes.
  * Auth : header Vercel Cron (x-vercel-cron) OU Authorization: Bearer CRON_SECRET
  * (pour un pinger externe type cron-job.org si le plan Vercel limite la fréquence).
  * Fait : approvals expirées → refus ; agents silencieux > 15 min → alerte ; purge 90 j.
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   for (const a of expired ?? []) {
     await db.from("events").insert({
       agent_id: a.agent_id, type: "denied",
-      summary_fr: `Expiré sans réponse → refusé — ${a.action_summary.slice(0, 200)}`,
+      summary_fr: `Expiré sans réponse → refusé, ${a.action_summary.slice(0, 200)}`,
     });
   }
 

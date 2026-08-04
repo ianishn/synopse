@@ -1,5 +1,5 @@
 /**
- * DELETE /api/agents/:id — supprime un agent de l'utilisateur connecté.
+ * DELETE /api/agents/:id, supprime un agent de l'utilisateur connecté.
  * Cascade DB (FK on delete cascade) : approbations, events, spend liés partent avec.
  * Le token de pairing devient invalide → le plugin reçoit 401 et applique son fail-safe.
  */

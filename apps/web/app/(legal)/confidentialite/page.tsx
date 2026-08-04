@@ -1,4 +1,4 @@
-export const metadata = { title: "Politique de confidentialité — Synopse" };
+export const metadata = { title: "Politique de confidentialité, Synopse" };
 export default function Page() {
   return (
     <>

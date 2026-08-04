@@ -1,5 +1,5 @@
 /**
- * POST /api/pairing — crée un agent pour l'user connecté (session Supabase).
+ * POST /api/pairing, crée un agent pour l'user connecté (session Supabase).
  * Renvoie le token EN CLAIR UNE SEULE FOIS (seul le hash est stocké) + le code de
  * liaison Telegram. Le dashboard affiche : `npx synopse connect <token>` (F1).
  * Limite plan Gratuit : 1 agent (enforcement côté API, spec F8).

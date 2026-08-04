@@ -1,5 +1,5 @@
 /**
- * Webhook Telegram (prod) — reçoit les taps de boutons et le lien de compte "/start <code>".
+ * Webhook Telegram (prod), reçoit les taps de boutons et le lien de compte "/start <code>".
  * Sécurité : header X-Telegram-Bot-Api-Secret-Token == TELEGRAM_WEBHOOK_SECRET (défini au setWebhook).
  * En dev local : scripts/telegram-poll.mjs joue le même rôle via getUpdates.
  */
@@ -30,12 +30,12 @@ export async function POST(request: Request) {
       await db.from("events").insert({
         agent_id: appr.agent_id,
         type: status,
-        summary_fr: `${status === "approved" ? "Autorisé" : "Refusé"} par toi (Telegram) — ${appr.action_summary.slice(0, 200)}`,
+        summary_fr: `${status === "approved" ? "Autorisé" : "Refusé"} par toi (Telegram), ${appr.action_summary.slice(0, 200)}`,
       });
       await tg("editMessageText", {
         chat_id: cq.message.chat.id,
         message_id: cq.message.message_id,
-        text: `${status === "approved" ? "✅ Autorisé" : "🛡️ Refusé"} — ${appr.action_summary.slice(0, 300)}`,
+        text: `${status === "approved" ? "✅ Autorisé" : "🛡️ Refusé"}, ${appr.action_summary.slice(0, 300)}`,
       });
     }
     return NextResponse.json({ ok: true });

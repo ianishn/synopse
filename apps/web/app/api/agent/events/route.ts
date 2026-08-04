@@ -1,4 +1,4 @@
-/** POST /api/agent/events — journal + agrégation usage→spend. Contrat : @synopse/shared api.ts */
+/** POST /api/agent/events, journal + agrégation usage→spend. Contrat : @synopse/shared api.ts */
 import { NextResponse } from "next/server";
 import { authAgent } from "@/lib/agent-auth";
 import { createServiceClient } from "@/lib/supabase/server";

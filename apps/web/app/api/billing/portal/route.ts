@@ -1,4 +1,4 @@
-/** POST /api/billing/portal — portail client Stripe (changer/annuler l'abonnement). */
+/** POST /api/billing/portal, portail client Stripe (changer/annuler l'abonnement). */
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";

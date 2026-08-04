@@ -1,5 +1,5 @@
 /**
- * POST /api/rules/profile — active toutes les règles d'un profil en un clic (spec F2).
+ * POST /api/rules/profile, active toutes les règles d'un profil en un clic (spec F2).
  * Body : { profile: "perso"|"commercant"|"builder" }.
  * Respecte la limite du plan : active autant de règles que possible, signale si tronqué.
  */
