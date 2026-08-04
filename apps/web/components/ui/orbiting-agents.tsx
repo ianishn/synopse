@@ -7,9 +7,12 @@
 import { useEffect, useRef } from "react";
 
 const ORBITS = [
-  { size: "h-[22rem] w-[22rem] md:h-[30rem] md:w-[30rem]", duration: 18, agents: [{ n: "OpenClaw", a: -60 }, { n: "Claude", a: 0 }, { n: "ChatGPT", a: 60 }] },
-  { size: "h-[28rem] w-[28rem] md:h-[38rem] md:w-[38rem]", duration: 24, agents: [{ n: "Gemini", a: 0 }, { n: "Copilot", a: -90 }] },
-  { size: "h-[34rem] w-[34rem] md:h-[46rem] md:w-[46rem]", duration: 30, agents: [{ n: "Mistral", a: -60 }, { n: "Llama", a: 0 }, { n: "Perplexity", a: 60 }] },
+  { size: "h-[22rem] w-[22rem] md:h-[30rem] md:w-[30rem]", duration: 18, agents: [
+    { n: "OpenClaw", s: "/agents/openclaw.png", a: -60 }, { n: "Claude", s: "/agents/claude.png", a: 0 }, { n: "ChatGPT", s: "/agents/chatgpt.png", a: 60 }] },
+  { size: "h-[28rem] w-[28rem] md:h-[38rem] md:w-[38rem]", duration: 24, agents: [
+    { n: "Gemini", s: "/agents/gemini.png", a: 0 }, { n: "Copilot", s: "/agents/copilot.png", a: -90 }] },
+  { size: "h-[34rem] w-[34rem] md:h-[46rem] md:w-[46rem]", duration: 30, agents: [
+    { n: "Mistral", s: "/agents/mistral.png", a: -60 }, { n: "Ollama", s: "/agents/ollama.png", a: 0 }, { n: "Perplexity", s: "/agents/perplexity.png", a: 60 }] },
 ];
 
 function ParticleSphere() {
@@ -83,15 +86,16 @@ export function OrbitingAgents() {
 
       {ORBITS.map((orbit, i) => {
         const cw = i % 2 === 0;
-        const all = [...orbit.agents, ...orbit.agents.map((x) => ({ n: x.n, a: x.a + 180 }))];
+        const all = [...orbit.agents, ...orbit.agents.map((x) => ({ ...x, a: x.a + 180 }))];
         return (
           <div key={i} className={`absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rounded-full border border-line ${orbit.size}`}>
             {all.map((ag, j) => (
               <div key={j} className="orbit-item absolute left-1/2 top-0 -ml-10 flex h-1/2 origin-bottom flex-col items-center"
                 style={{ "--sa": `${ag.a}deg`, animation: `${cw ? "orbit-cw" : "orbit-ccw"} ${orbit.duration}s linear infinite` } as React.CSSProperties}>
-                <div className="orbit-counter relative z-10 -mt-4 rounded-full border border-line bg-void px-3 py-1.5"
+                <div className="orbit-counter relative z-10 -mt-5 grid h-11 w-11 place-items-center rounded-full border border-line bg-void md:h-14 md:w-14"
                   style={{ "--co": `${-ag.a}deg`, animation: `${cw ? "counter-cw" : "counter-ccw"} ${orbit.duration}s linear infinite` } as React.CSSProperties}>
-                  <span className="whitespace-nowrap font-mono text-[0.62rem] tracking-wide text-s300 md:text-xs">{ag.n}</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={ag.s} alt={ag.n} title={ag.n} width={28} height={28} className="h-6 w-6 object-contain md:h-8 md:w-8" />
                 </div>
               </div>
             ))}

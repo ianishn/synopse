@@ -1,10 +1,7 @@
-/**
- * Logo Synopse (charte V1.0), le vrai mark fourni dans DA/ (barres échancrées + losange orange).
- * Utilisé comme "chip" arrondi (le fond sombre du fichier lit comme une icône d'app).
- */
+/** Logo Synopse (charte V1.0) : PNG blanc sans fond fourni dans DA/. */
 export function LogoIcon({ className = "", size = 40 }: { className?: string; size?: number }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src="/synopse-mark.png" alt="Synopse" width={size} height={size} className={`rounded-xl ${className}`} />;
+  return <img src="/synopse-logo.png" alt="Synopse" width={size} height={size} className={className} />;
 }
 
 export function Logo({ className = "", size = 32, showText = true }:
@@ -12,7 +9,7 @@ export function Logo({ className = "", size = 32, showText = true }:
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/synopse-mark.png" alt="Synopse" width={size} height={size} className="rounded-lg" />
+      <img src="/synopse-logo.png" alt="Synopse" width={size} height={size} />
       {showText && <span className="font-display text-lg font-bold tracking-tight text-off">SYNOPSE</span>}
     </span>
   );

@@ -14,7 +14,7 @@ import { BorderBeam } from "@/components/ui/border-beam";
 import { FallingPattern } from "@/components/ui/falling-pattern";
 import { ButtonColorful } from "@/components/ui/button-colorful";
 import { OrbitingAgents } from "@/components/ui/orbiting-agents";
-import { AttackChains } from "./attack-chains";
+import { AgentPipeline } from "./pipeline";
 import { Logo, LogoIcon } from "../logo";
 
 const CTA =
@@ -91,7 +91,7 @@ export function Landing({ lang }: { lang: Lang }) {
             </div>
           </Reveal>
 
-          <Reveal delay={140}><AttackChains lang={lang} /></Reveal>
+          <Reveal delay={140}><div className="mt-12"><AgentPipeline lang={lang} /></div></Reveal>
         </div>
       </section>
 
