@@ -9,6 +9,7 @@ import { Reveal } from "./reveal";
 import { Counter } from "./counter";
 import { Pricing } from "./pricing";
 import { COPY, type Lang } from "./copy";
+import { GlowCard } from "@/components/ui/glow-card";
 import { FallingPattern } from "@/components/ui/falling-pattern";
 import { ButtonColorful } from "@/components/ui/button-colorful";
 import { OrbitingAgents } from "@/components/ui/orbiting-agents";
@@ -77,25 +78,25 @@ export function Landing({ lang }: { lang: Lang }) {
 
           <Reveal delay={100}>
             <div className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-4 text-center">
-              <div className="rounded-2xl border border-line bg-surface/85 p-6">
+              <GlowCard><div className="p-6">
                 <p className="font-display text-4xl font-bold text-orange"><Counter value={94} suffix=" %" /></p>
                 <p className="mt-1 text-sm text-s400">{t.fears.stat1}</p>
-              </div>
-              <div className="rounded-2xl border border-line bg-surface/85 p-6">
+              </div></GlowCard>
+              <GlowCard><div className="p-6">
                 <p className="font-display text-4xl font-bold text-orange"><Counter value={78} suffix=" %" /></p>
                 <p className="mt-1 text-sm text-s400">{t.fears.stat2}</p>
-              </div>
+              </div></GlowCard>
             </div>
           </Reveal>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {t.fears.cards.map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="h-full rounded-2xl border border-line bg-surface/85 p-7 transition duration-300 hover:-translate-y-1 hover:border-orange/50">
+                <GlowCard><div className="p-7">
                   <p className="font-mono text-sm text-orange">0{i + 1}</p>
                   <h3 className="mt-3 text-lg font-semibold text-off">{title}</h3>
                   <p className="mt-2 text-[0.95rem] leading-relaxed text-s400">{desc}</p>
-                </div>
+                </div></GlowCard>
               </Reveal>
             ))}
           </div>
@@ -112,11 +113,11 @@ export function Landing({ lang }: { lang: Lang }) {
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {t.how.steps.map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="relative h-full rounded-2xl border border-line bg-surface/85 p-7 text-left transition duration-300 hover:-translate-y-1 hover:border-orange/50">
+                <GlowCard><div className="p-7 text-left">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--orange-soft)] font-mono text-sm font-medium text-orange">{i + 1}</span>
                   <h3 className="mt-4 font-semibold text-off">{title}</h3>
                   <p className="mt-2 text-[0.95rem] text-s400">{desc}</p>
-                </div>
+                </div></GlowCard>
               </Reveal>
             ))}
           </div>
@@ -168,7 +169,7 @@ export function Landing({ lang }: { lang: Lang }) {
             <Reveal><p className="eyebrow text-center">{t.pricing.faqTitle}</p></Reveal>
             <div className="mt-6 space-y-3">
               {t.pricing.faq.map(([q, a]) => (
-                <details key={q} className="group rounded-xl border border-line bg-surface px-5 py-4 transition hover:border-s400">
+                <details key={q} className="group rounded-xl border border-line bg-void/70 px-5 py-4 backdrop-blur-xl transition hover:border-orange/50">
                   <summary className="cursor-pointer list-none font-medium text-off marker:content-none">
                     <span className="mr-2 font-mono text-orange group-open:hidden">+</span>
                     <span className="mr-2 hidden font-mono text-orange group-open:inline">−</span>

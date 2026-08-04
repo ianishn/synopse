@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CtaLink } from "./analytics";
 import { COPY, type Lang } from "./copy";
+import { GlowCard } from "@/components/ui/glow-card";
 
 export function Pricing({ lang = "fr" }: { lang?: Lang }) {
   const t = COPY[lang].pricing;
@@ -25,8 +26,8 @@ export function Pricing({ lang = "fr" }: { lang?: Lang }) {
         {t.plans.map((p, i) => {
           const star = i === 1;
           return (
-            <div key={p.name}
-              className={`rounded-2xl p-7 transition-transform hover:-translate-y-1 ${star ? "border-2 border-orange bg-surface shadow-[0_24px_60px_-20px_rgba(234,88,12,0.35)] md:-translate-y-2" : "border border-line bg-surface"}`}>
+            <GlowCard key={p.name} featured={star} className={star ? "md:-translate-y-2" : ""}>
+            <div className="p-7">
               {star && <p className="eyebrow mb-3">{t.recommended}</p>}
               <h3 className="text-lg font-semibold text-off">{p.name}</h3>
               <p className="mt-1 font-display text-3xl font-bold text-off">
@@ -47,6 +48,7 @@ export function Pricing({ lang = "fr" }: { lang?: Lang }) {
                 </CtaLink>
               </div>
             </div>
+            </GlowCard>
           );
         })}
       </div>
