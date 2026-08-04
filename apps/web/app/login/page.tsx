@@ -1,9 +1,17 @@
 "use client";
-/** Connexion / inscription (email+mot de passe, Google). Gère la confirmation d'email Supabase. */
+/** Connexion / inscription : fond falling pattern, carte vitrée, force du mot de passe. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { FallingPattern } from "@/components/ui/falling-pattern";
+import { BorderBeam } from "@/components/ui/border-beam";
+import { ButtonColorful } from "@/components/ui/button-colorful";
+import { PasswordStrength } from "@/components/ui/password-strength";
+import { Logo } from "../logo";
+
+const INPUT =
+  "w-full rounded-xl border border-line bg-void/70 px-4 py-3 text-sm text-off placeholder:text-muted outline-none transition focus:border-orange";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,45 +24,31 @@ export default function LoginPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setNotice(null);
-    setBusy(true);
+    setError(null); setNotice(null); setBusy(true);
     try {
       const supabase = createClient();
       if (mode === "signin") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.push("/dashboard");
-        router.refresh();
+        router.push("/dashboard"); router.refresh();
       } else {
         const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${location.origin}/auth/callback` },
+          email, password, options: { emailRedirectTo: `${location.origin}/auth/callback` },
         });
         if (error) throw error;
-        // Confirmation d'email activée : pas de session immédiate → on informe l'utilisateur.
-        if (data.session) {
-          router.push("/dashboard");
-          router.refresh();
-        } else {
-          setNotice("Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.");
-          setMode("signin");
-        }
+        if (data.session) { router.push("/dashboard"); router.refresh(); }
+        else { setNotice("Compte créé. Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi."); setMode("signin"); }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue.");
-    } finally {
-      setBusy(false);
-    }
+    } finally { setBusy(false); }
   }
 
   async function google() {
     setError(null);
     try {
       const { error } = await createClient().auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${location.origin}/auth/callback` },
+        provider: "google", options: { redirectTo: `${location.origin}/auth/callback` },
       });
       if (error) throw error;
     } catch (err) {
@@ -62,59 +56,57 @@ export default function LoginPage() {
     }
   }
 
+  const signup = mode === "signup";
+
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-16">
+    <main className="relative flex min-h-screen items-center justify-center px-6 py-16">
+      <FallingPattern className="fixed inset-0 -z-10" />
+
       <div className="w-full max-w-sm">
-        <Link href="/" className="font-display text-xl font-bold tracking-tight">
-          synopse<span className="text-mint-500">.</span>
-        </Link>
-        <h1 className="mt-8 text-2xl font-bold">
-          {mode === "signin" ? "Ravi de te revoir" : "Protège ton agent"}
-        </h1>
-        <p className="mt-1 text-sm text-ink-500">
-          {mode === "signin" ? "Connecte-toi à ton tableau de bord." : "Crée ton compte gratuit, aucune carte requise."}
-        </p>
+        <Link href="/" className="inline-block"><Logo /></Link>
 
-        <form onSubmit={submit} className="mt-8 space-y-3">
-          <input
-            className="w-full rounded-xl border border-ink-200 bg-paper px-4 py-3 text-sm outline-none transition focus:border-mint-400"
-            type="email" placeholder="Adresse email" autoComplete="email"
-            value={email} onChange={(e) => setEmail(e.target.value)} required
-          />
-          <input
-            className="w-full rounded-xl border border-ink-200 bg-paper px-4 py-3 text-sm outline-none transition focus:border-mint-400"
-            type="password" placeholder="Mot de passe (8 caractères min.)"
-            autoComplete={mode === "signin" ? "current-password" : "new-password"}
-            value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8}
-          />
-          <button
-            className="w-full rounded-xl bg-orange py-3 text-sm font-semibold text-white transition hover:bg-orange-bright disabled:opacity-50"
-            type="submit" disabled={busy}
-          >
-            {busy ? "…" : mode === "signin" ? "Se connecter" : "Créer mon compte"}
+        <div className="relative mt-6 overflow-hidden rounded-2xl border border-line bg-void/80 p-7 backdrop-blur-xl">
+          <BorderBeam duration={14} borderWidth={1.5} />
+
+          <h1 className="text-2xl font-bold text-off">{signup ? "Protège ton agent" : "Ravi de te revoir"}</h1>
+          <p className="mt-1 text-sm text-s400">
+            {signup ? "Compte gratuit, aucune carte requise." : "Connecte-toi à ta tour de contrôle."}
+          </p>
+
+          <form onSubmit={submit} className="mt-7 space-y-3">
+            <input className={INPUT} type="email" placeholder="Adresse email" autoComplete="email"
+              value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input className={INPUT} type="password" placeholder="Mot de passe"
+              autoComplete={signup ? "new-password" : "current-password"}
+              value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+
+            {signup && password.length > 0 && <PasswordStrength value={password} className="pt-1" />}
+
+            <ButtonColorful type="submit" disabled={busy} className="w-full justify-center"
+              label={busy ? "…" : signup ? "Créer mon compte" : "Se connecter"} />
+          </form>
+
+          <div className="my-5 flex items-center gap-3 text-xs text-muted">
+            <span className="h-px flex-1 bg-line" />ou<span className="h-px flex-1 bg-line" />
+          </div>
+
+          <button onClick={google}
+            className="w-full rounded-xl border border-line bg-void/60 py-3 text-sm font-medium text-off transition hover:border-s400">
+            Continuer avec Google
           </button>
-        </form>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-ink-400">
-          <span className="h-px flex-1 bg-ink-100" />ou<span className="h-px flex-1 bg-ink-100" />
+          {notice && <p className="mt-4 rounded-xl border border-orange/30 bg-[var(--orange-soft)] px-4 py-3 text-sm text-orange">{notice}</p>}
+          {error && <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
+
+          <button className="mt-6 w-full text-center text-sm text-muted transition hover:text-off"
+            onClick={() => { setMode(signup ? "signin" : "signup"); setError(null); setNotice(null); }}>
+            {signup ? "Déjà un compte ? Se connecter" : "Pas encore de compte ? Créer un compte"}
+          </button>
         </div>
 
-        <button
-          onClick={google}
-          className="w-full rounded-xl border border-ink-200 bg-paper py-3 text-sm font-medium transition hover:border-ink-400"
-        >
-          Continuer avec Google
-        </button>
-
-        {notice && <p className="mt-4 rounded-xl bg-mint-50 px-4 py-3 text-sm text-ink-700">{notice}</p>}
-        {error && <p className="mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
-
-        <button
-          className="mt-6 w-full text-center text-sm text-ink-500 hover:text-ink-900"
-          onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(null); setNotice(null); }}
-        >
-          {mode === "signin" ? "Pas encore de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
-        </button>
+        <p className="mt-5 text-center text-xs text-muted">
+          Gratuit · sans carte · <span className="text-s400">protégé en 3 minutes</span>
+        </p>
       </div>
     </main>
   );
