@@ -166,7 +166,7 @@ export default async function Dashboard() {
         <RulesSummary rules={rulesSummary} />
 
         {/* Module 5 — Dépenses & plafond */}
-        <SpendPanel daily={daily} monthTotal={monthTotal} monthlyCap={monthlyCap} dailyCap={dailyCap} perAgent={perAgentSpend} />
+        <SpendPanel daily={daily} monthTotal={monthTotal} monthlyCap={monthlyCap} dailyCap={dailyCap} perAgent={perAgentSpend} plan={plan} />
 
         {/* Module 6 — Kill switch */}
         <KillSwitch frozen={anyFrozen} />

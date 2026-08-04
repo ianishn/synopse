@@ -2,6 +2,7 @@
 /** Module 3 — Mes agents : statut, dernier heartbeat, métriques 30 j, gestion. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { GlowCard } from "@/components/ui/glow-card";
 
 type AgentRow = {
   id: string; name: string; status: string; last_heartbeat_at: string | null;
@@ -57,7 +58,7 @@ export function AgentsPanel({ agents, maxAgents }: { agents: AgentRow[]; maxAgen
       {agents.map((a) => {
         const st = STATUS[a.status] ?? STATUS.active;
         return (
-          <div key={a.id} className="rounded-xl border border-line bg-void">
+          <GlowCard key={a.id} className="rounded-xl"><div>
             <div className="flex items-center justify-between px-5 py-4">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="font-semibold text-off">{a.name}</span>
@@ -87,7 +88,7 @@ export function AgentsPanel({ agents, maxAgents }: { agents: AgentRow[]; maxAgen
                 </div>
               </div>
             )}
-          </div>
+          </div></GlowCard>
         );
       })}
     </section>

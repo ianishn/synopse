@@ -1,7 +1,8 @@
-/** Journal lisible (F7), événements 90 j, filtre par type via ?f=bloque|valide|info. */
+/** Journal lisible (F7), rétention selon le plan (7 j en gratuit, 90 j en payant). */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { planForUser } from "@/lib/plan";
 
 export const dynamic = "force-dynamic";
 const FILTERS: Record<string, string[]> = {
@@ -17,11 +18,17 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
   const { f } = await searchParams;
 
   const db = createServiceClient();
+  const plan = await planForUser(db, user.id);
+  // Rétention imposée côté serveur : 7 jours en gratuit, 90 jours en payant.
+  const retentionDays = plan === "free" ? 7 : 90;
+  const since = new Date(Date.now() - retentionDays * 86_400_000).toISOString();
+
   const { data: agents } = await db.from("agents").select("id, name").eq("user_id", user.id);
   const ids = (agents ?? []).map((a) => a.id);
   const names = Object.fromEntries((agents ?? []).map((a) => [a.id, a.name]));
   let q = db.from("events").select("id, agent_id, type, summary_fr, created_at")
-    .in("agent_id", ids).neq("type", "usage").order("created_at", { ascending: false }).limit(100);
+    .in("agent_id", ids).neq("type", "usage").gte("created_at", since)
+    .order("created_at", { ascending: false }).limit(100);
   if (f && FILTERS[f]) q = q.in("type", FILTERS[f]);
   const { data: events } = await q;
 
@@ -41,7 +48,12 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
       <main className="mx-auto max-w-2xl space-y-6 px-6 py-10">
         <div>
           <h1 className="text-2xl font-bold">Journal</h1>
-          <p className="mt-1 text-sm text-ink-500">Chaque action sensible, en clair. Conservé 90 jours.</p>
+          <p className="mt-1 text-sm text-ink-500">
+            Chaque action sensible, en clair. Conservé {retentionDays} jours.
+            {plan === "free" && (
+              <> <a href="/dashboard/account/billing" className="font-medium text-orange hover:text-orange-bright">Passe à Protégé pour 90 jours d&apos;historique</a>.</>
+            )}
+          </p>
         </div>
         <nav className="flex flex-wrap gap-2 text-sm">
           {[["", "Tout"], ["bloque", "Bloqué"], ["valide", "Validations"], ["info", "Infos"]].map(([k, label]) => (
