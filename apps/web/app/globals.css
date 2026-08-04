@@ -1,7 +1,27 @@
 @import "tailwindcss";
 
-/* Palette héritée de l'identité Synopse (ancien site) : papier clair, encres vert-gris, menthe. */
+/* ============================================================
+   CHARTE SYNOPSE V1.0 — "Technical Trust" : sombre + Signal Orange + Geist.
+   La LANDING utilise ces tokens DA (sombre). Le reste de l'app utilise encore
+   les tokens clairs hérités (migration DA à suivre) — les deux coexistent.
+   ============================================================ */
 :root {
+  /* --- DA V1.0 (sombre) --- */
+  --void: #0f172a;        /* Void Slate — fonds */
+  --void-2: #0b1120;      /* fond plus profond */
+  --surface: #1e293b;     /* surface / cartes */
+  --surface-2: #273549;
+  --off: #f8fafc;         /* Off-White — texte primaire */
+  --s300: #cbd5e1;
+  --s400: #94a3b8;        /* texte secondaire */
+  --muted: #64748b;       /* Muted Slate — tertiaire */
+  --line: #334155;        /* Slate-700 — bordures */
+  --line-soft: #223049;
+  --orange: #ea580c;      /* Signal Orange — accent & action */
+  --orange-bright: #f97316;
+  --orange-soft: rgba(234, 88, 12, 0.12);
+
+  /* --- Hérité (clair) : dashboard/login/légal jusqu'à leur migration --- */
   --canvas: #fafbfa;
   --canvas-warm: #f5f2ec;
   --paper: #ffffff;
@@ -23,6 +43,19 @@
 }
 
 @theme inline {
+  --color-void: var(--void);
+  --color-void-2: var(--void-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-off: var(--off);
+  --color-s300: var(--s300);
+  --color-s400: var(--s400);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-orange: var(--orange);
+  --color-orange-bright: var(--orange-bright);
+
   --color-canvas: var(--canvas);
   --color-canvas-warm: var(--canvas-warm);
   --color-paper: var(--paper);
@@ -41,38 +74,34 @@
   --color-mint-300: var(--mint-300);
   --color-mint-400: var(--mint-400);
   --color-mint-500: var(--mint-500);
-  --font-display: var(--font-sora);
-  --font-sans: var(--font-outfit);
-  --font-mono: var(--font-jetbrains);
+
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-/* Marque « papier » assumée en clair : force les contrôles natifs (inputs, scrollbars)
-   à rester clairs même quand l'OS est en mode sombre — évite des champs illisibles au login. */
-:root { color-scheme: light; }
-
+/* Corps clair par défaut (app) ; la landing pose son propre fond sombre. */
 body {
   background: var(--canvas);
   color: var(--ink-900);
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 h1, h2, h3 {
-  font-family: var(--font-sora), sans-serif;
-  letter-spacing: -0.03em;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
-/* Eyebrow : le marqueur éditorial de l'ancien site. */
 .eyebrow {
-  font-family: var(--font-jetbrains), monospace;
+  font-family: var(--font-geist-mono), monospace;
   font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--mint-500);
+  letter-spacing: 0.16em;
+  color: var(--orange);
 }
 
-/* ---- Effets de la landing (sobre-premium, accents menthe) ---- */
-
-/* Révélation au scroll (activée par la classe .in ajoutée en JS). */
+/* ---- Animations ---- */
 .reveal {
   opacity: 0;
   transform: translateY(20px);
@@ -81,66 +110,44 @@ h1, h2, h3 {
 }
 .reveal.in { opacity: 1; transform: none; }
 
-/* Grille de fond subtile (profondeur sans surcharge). */
+/* Grille sombre (landing). */
 .bg-grid {
   background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--ink-200) 45%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--ink-200) 45%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, rgba(51, 65, 85, 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(51, 65, 85, 0.5) 1px, transparent 1px);
   background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 25%, transparent 75%);
 }
 
-/* Halo lumineux menthe (derrière le hero / éléments clés). */
+/* Halo orange (signal intercepté). */
 .glow {
-  background: radial-gradient(circle at center, color-mix(in srgb, var(--mint-400) 55%, transparent), transparent 70%);
-  filter: blur(60px);
+  background: radial-gradient(circle at center, rgba(234, 88, 12, 0.5), transparent 70%);
+  filter: blur(70px);
 }
 
-/* Apparition d'un message (démo Telegram). */
-@keyframes pop-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to { opacity: 1; transform: none; }
-}
+@keyframes pop-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
 .pop-in { animation: pop-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-/* Indicateur de frappe. */
-@keyframes typing {
-  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-3px); }
-}
+@keyframes typing { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
 .typing-dot { animation: typing 1.2s infinite; }
 
-/* Pulsation douce (statut « live »). */
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mint-500) 55%, transparent); }
-  70% { box-shadow: 0 0 0 8px transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
-}
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.55); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 .pulse-ring { animation: pulse-ring 2s infinite; }
 
-/* Soulignement dessiné à la main (accent hero, inspiré 21st #8501) — se trace au chargement. */
-@keyframes draw-underline {
-  from { stroke-dashoffset: 260; }
-  to { stroke-dashoffset: 0; }
-}
-.underline-draw path {
-  stroke-dasharray: 260;
-  stroke-dashoffset: 260;
-  animation: draw-underline 0.9s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+@keyframes diamond-pulse { 0%, 100% { transform: rotate(45deg) scale(1); opacity: 1; } 50% { transform: rotate(45deg) scale(1.12); opacity: 0.85; } }
+.diamond-pulse { animation: diamond-pulse 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 
-/* Pop-up / modal (tutoriel). */
-@keyframes modal-in {
-  from { opacity: 0; transform: translateY(12px) scale(0.98); }
-  to { opacity: 1; transform: none; }
-}
+@keyframes draw-underline { from { stroke-dashoffset: 260; } to { stroke-dashoffset: 0; } }
+.underline-draw path { stroke-dasharray: 260; stroke-dashoffset: 260; animation: draw-underline 0.9s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes modal-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
 .modal-in { animation: modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
 @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
 .overlay-in { animation: overlay-in 0.25s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .pop-in, .typing-dot, .pulse-ring, .modal-in, .overlay-in { animation: none; }
+  .pop-in, .typing-dot, .pulse-ring, .diamond-pulse, .modal-in, .overlay-in { animation: none; }
   .underline-draw path { stroke-dashoffset: 0; animation: none; }
 }
