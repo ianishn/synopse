@@ -8,6 +8,9 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { isAdmin, PLAN_MONTHLY_EUR } from "@/lib/admin";
 import { EvolutionChart } from "./chart";
 import { PlanControl } from "./plan-control";
+import { FallingPattern } from "@/components/ui/falling-pattern";
+import { LangSwitch } from "@/components/ui/lang-switch";
+import { getLang, UI } from "@/lib/lang";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +19,8 @@ export default async function AdminPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   if (!isAdmin(user.email)) redirect("/dashboard");
+  const lang = await getLang();
+  const ui = UI[lang];
 
   const db = createServiceClient();
   const { data: usersData } = await db.auth.admin.listUsers({ page: 1, perPage: 1000 });
@@ -52,31 +57,33 @@ export default async function AdminPage() {
   }));
 
   const kpis = [
-    { label: "Utilisateurs", value: totalUsers },
-    { label: "Abonnés payants", value: paidCount },
-    { label: "MRR estimé", value: `${mrr} €` },
-    { label: "ARR estimé", value: `${mrr * 12} €` },
-    { label: "Conversion", value: `${conv} %` },
+    { label: ui.users, value: totalUsers },
+    { label: ui.paidSubs, value: paidCount },
+    { label: ui.revenue, value: `${mrr} €` },
+    { label: ui.arr, value: `${mrr * 12} €` },
+    { label: ui.conversion, value: `${conv} %` },
   ];
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-ink-100">
+    <div className="relative min-h-screen">
+      <FallingPattern className="fixed inset-0 -z-10 opacity-60" duration={52} blurIntensity="0.55em" dotSize={2.6} />
+      <header className="border-b border-line bg-void/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <a href="/dashboard" className="font-display text-lg font-bold tracking-tight text-off">synopse<span className="text-orange">.</span> <span className="text-ink-400">admin</span></a>
           <div className="flex items-center gap-4 text-sm text-ink-400">
+            <LangSwitch lang={lang} />
             <a className="hover:text-off" href="https://supabase.com/dashboard/project/stxgjsiesofubytmjiie" target="_blank" rel="noreferrer">Supabase ↗</a>
-            <a className="hover:text-off" href="/dashboard">← Tableau de bord</a>
+            <a className="hover:text-off" href="/dashboard">{ui.backToDashboard}</a>
           </div>
         </div>
       </header>
       <main className="mx-auto max-w-5xl space-y-8 px-6 py-10">
-        <h1 className="text-2xl font-bold">Pilotage</h1>
+        <h1 className="text-2xl font-bold">{ui.pilot}</h1>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
           {kpis.map((k) => (
-            <div key={k.label} className="rounded-2xl border border-ink-100 bg-paper p-5">
+            <div key={k.label} className="rounded-2xl border border-line bg-void/80 p-5 backdrop-blur-xl">
               <p className="font-display text-2xl font-bold text-off">{k.value}</p>
               <p className="mt-1 text-xs text-ink-400">{k.label}</p>
             </div>
@@ -85,10 +92,10 @@ export default async function AdminPage() {
 
         {/* Répartition par forfait */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">Répartition par forfait</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">{ui.byPlan}</h2>
           <div className="grid grid-cols-3 gap-4">
             {[["Gratuit", perPlan.free], ["Protégé", perPlan.protege], ["Studio", perPlan.studio]].map(([label, n]) => (
-              <div key={label as string} className="rounded-2xl border border-ink-100 bg-paper p-5">
+              <div key={label as string} className="rounded-2xl border border-line bg-void/80 p-5 backdrop-blur-xl">
                 <p className="font-display text-xl font-bold text-off">{n as number}</p>
                 <p className="mt-1 text-sm text-ink-400">{label as string}</p>
               </div>
@@ -98,23 +105,23 @@ export default async function AdminPage() {
 
         {/* Courbe */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">Évolution dans le temps</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">{ui.evolution}</h2>
           <EvolutionChart data={points} />
         </section>
 
         {/* Table users */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">Utilisateurs ({totalUsers})</h2>
-          <div className="overflow-x-auto rounded-2xl border border-ink-100 bg-paper">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-400">{ui.users} ({totalUsers})</h2>
+          <div className="overflow-x-auto rounded-2xl border border-line bg-void/80 backdrop-blur-xl">
             <table className="w-full text-sm">
-              <thead className="border-b border-ink-100 text-left text-xs uppercase tracking-wide text-ink-400">
+              <thead className="border-b border-line text-left text-xs uppercase tracking-wide text-ink-400">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Email</th>
-                  <th className="px-4 py-3 font-medium">Inscrit le</th>
-                  <th className="px-4 py-3 font-medium">Forfait (test : cliquer pour changer)</th>
+                  <th className="px-4 py-3 font-medium">{ui.email}</th>
+                  <th className="px-4 py-3 font-medium">{ui.signedUp}</th>
+                  <th className="px-4 py-3 font-medium">{ui.plan}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-ink-100">
+              <tbody className="divide-y divide-line">
                 {users
                   .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                   .map((u) => {
@@ -122,7 +129,7 @@ export default async function AdminPage() {
                     return (
                       <tr key={u.id}>
                         <td className="px-4 py-3">{u.email}</td>
-                        <td className="px-4 py-3 text-ink-400">{new Date(u.created_at).toLocaleDateString("fr-FR")}</td>
+                        <td className="px-4 py-3 text-ink-400">{new Date(u.created_at).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR")}</td>
                         <td className="px-4 py-3">
                           <PlanControl userId={u.id} plan={p} />
                         </td>

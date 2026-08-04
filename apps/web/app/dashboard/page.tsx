@@ -15,6 +15,9 @@ import { SpendPanel } from "./spend-panel";
 import { RulesSummary } from "./rules-summary";
 import { SubscriptionRecap } from "./subscription-recap";
 import { TutorialModal } from "./tutorial-modal";
+import { FallingPattern } from "@/components/ui/falling-pattern";
+import { LangSwitch } from "@/components/ui/lang-switch";
+import { getLang, UI } from "@/lib/lang";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +33,8 @@ export default async function Dashboard() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const admin = isAdmin(user.email);
+  const lang = await getLang();
+  const ui = UI[lang];
 
   const db = createServiceClient();
   const plan = await planForUser(db, user.id);
@@ -131,17 +136,19 @@ export default async function Dashboard() {
     : { cls: "border-line bg-void text-s400", dot: "bg-green-500", text: "Tout va bien. Tes agents sont surveillés." };
 
   return (
-    <div className="min-h-screen grid-bg">
+    <div className="relative min-h-screen">
+      <FallingPattern className="fixed inset-0 -z-10 opacity-60" duration={52} blurIntensity="0.55em" dotSize={2.6} />
       {anyFrozen && <FrozenBanner />}
       <header className="border-b border-line bg-void">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
           <a href="/dashboard" className="font-display text-lg font-bold tracking-tight text-off">synopse<span className="text-orange">.</span></a>
           <div className="flex items-center gap-4 text-sm text-muted">
-            {admin && <a className="font-medium text-orange hover:text-orange-bright" href="/admin">Admin</a>}
-            <a className="hover:text-off" href="/dashboard/rules">Règles</a>
-            <a className="hover:text-off" href="/dashboard/journal">Journal</a>
-            <a className="hover:text-off" href="/dashboard/account">Compte</a>
-            <form action="/auth/signout" method="post"><button className="hover:text-off">Se déconnecter</button></form>
+            {admin && <a className="font-medium text-orange hover:text-orange-bright" href="/admin">{ui.admin}</a>}
+            <LangSwitch lang={lang} />
+            <a className="hover:text-off" href="/dashboard/rules">{ui.rules}</a>
+            <a className="hover:text-off" href="/dashboard/journal">{ui.journal}</a>
+            <a className="hover:text-off" href="/dashboard/account">{ui.account}</a>
+            <form action="/auth/signout" method="post"><button className="hover:text-off">{ui.signout}</button></form>
           </div>
         </div>
       </header>

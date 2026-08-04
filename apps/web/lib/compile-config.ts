@@ -7,6 +7,7 @@
 import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Agent, CompiledConfig, Rule, RuleTemplate } from "@synopse/shared";
+import { maxRules, planForUser } from "./plan";
 
 const APPROVAL_TIMEOUT_MS = 15 * 60_000;
 
@@ -18,16 +19,24 @@ export async function computeConfig(
     .from("rules")
     .select("*, rule_templates(*)")
     .eq("user_id", agent.user_id)
-    .eq("enabled", true);
+    .eq("enabled", true)
+    .order("created_at", { ascending: true }); // les plus anciennes d'abord (ordre stable)
 
-  const compiled = ((rules ?? []) as Array<Rule & { rule_templates: RuleTemplate | null }>)
-    .filter((r) => !r.agent_id || r.agent_id === agent.id)
-    .map((r) => ({
-      rule_id: r.id,
-      severity: r.severity,
-      matcher: { ...(r.rule_templates?.matcher_json ?? {}), ...(r.params_json ?? {}) },
-      label_fr: r.rule_templates?.label_fr ?? String((r.params_json as { label_fr?: string })?.label_fr ?? "Règle personnalisée"),
-    }));
+  const all = ((rules ?? []) as Array<Rule & { rule_templates: RuleTemplate | null }>)
+    .filter((r) => !r.agent_id || r.agent_id === agent.id);
+
+  // Quota du plan appliqué À LA SOURCE : si l'user retombe en gratuit après avoir
+  // activé 10 règles, seules les 3 premières sont servies au plugin (pas de bypass
+  // en payant un mois puis en résiliant).
+  const limit = maxRules(await planForUser(db, agent.user_id));
+  const kept = Number.isFinite(limit) ? all.slice(0, limit) : all;
+
+  const compiled = kept.map((r) => ({
+    rule_id: r.id,
+    severity: r.severity,
+    matcher: { ...(r.rule_templates?.matcher_json ?? {}), ...(r.params_json ?? {}) },
+    label_fr: r.rule_templates?.label_fr ?? String((r.params_json as { label_fr?: string })?.label_fr ?? "Règle personnalisée"),
+  }));
 
   // F4 : budget dépassé → règle système "tout en confirm" (matcher vide = matche tout).
   // Incluse dans le body → l'etag change au franchissement → le plugin la récupère (≤ 30 s).

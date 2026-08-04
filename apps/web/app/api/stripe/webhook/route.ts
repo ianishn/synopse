@@ -6,6 +6,8 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { planFromPriceId, stripe, verifyStripeSignature } from "@/lib/stripe";
+import { enforcePlanLimits } from "@/lib/enforce-plan";
+import type { Plan } from "@/lib/plan";
 
 export async function POST(request: Request) {
   const payload = await request.text();
@@ -45,11 +47,16 @@ export async function POST(request: Request) {
       plan: active ? planFromPriceId(priceId) : "free",
       status: active ? obj.status : "canceled",
     };
-    if (obj.metadata?.user_id) {
-      await db.from("subscriptions").upsert({ user_id: obj.metadata.user_id, stripe_customer_id: obj.customer, ...patch });
+    let userId: string | undefined = obj.metadata?.user_id;
+    if (userId) {
+      await db.from("subscriptions").upsert({ user_id: userId, stripe_customer_id: obj.customer, ...patch });
     } else {
-      await db.from("subscriptions").update(patch).eq("stripe_customer_id", obj.customer);
+      const { data } = await db.from("subscriptions").update(patch).eq("stripe_customer_id", obj.customer).select("user_id").single();
+      userId = data?.user_id;
     }
+    // Plan qui baisse : on remet le compte en conformité (règles en trop désactivées,
+    // plafonds retirés en gratuit). Sinon l'utilisateur garderait ses avantages.
+    if (userId) await enforcePlanLimits(db, userId, patch.plan as Plan);
   }
 
   return NextResponse.json({ received: true });

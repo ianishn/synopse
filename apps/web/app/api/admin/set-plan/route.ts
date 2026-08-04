@@ -6,6 +6,7 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
+import { enforcePlanLimits } from "@/lib/enforce-plan";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -23,5 +24,7 @@ export async function POST(request: Request) {
     plan,
     status: plan === "free" ? "canceled" : "active",
   });
+  // Baisse de plan : mise en conformité immédiate (règles en trop, plafonds).
+  await enforcePlanLimits(db, user_id, plan);
   return NextResponse.json({ ok: true, plan });
 }

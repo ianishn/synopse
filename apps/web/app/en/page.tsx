@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   },
 };
 
+/** Visiter la landing EN mémorise la langue pour tout le reste de l'app (login, dashboard, admin). */
 export default function Page() {
-  return <Landing lang="en" />;
+  return (
+    <>
+      <script dangerouslySetInnerHTML={{ __html: `document.cookie="lang=en;path=/;max-age=31536000;samesite=lax"` }} />
+      <Landing lang="en" />
+    </>
+  );
 }
