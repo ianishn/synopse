@@ -12,9 +12,9 @@ const PROFILES: { key: string; label: string; hint: string }[] = [
 ];
 
 const SEVERITY: Record<string, { label: string; cls: string }> = {
-  block: { label: "Blocage", cls: "bg-red-50 text-red-700" },
+  block: { label: "Blocage", cls: "bg-red-500/10 text-red-300" },
   confirm: { label: "Validation", cls: "bg-mint-50 text-mint-500" },
-  notify: { label: "Alerte", cls: "bg-amber-50 text-amber-700" },
+  notify: { label: "Alerte", cls: "bg-amber-500/10 text-amber-300" },
 };
 
 export function RulesManager({ catalog, enabledIds, limit, plan }:
@@ -71,7 +71,7 @@ export function RulesManager({ catalog, enabledIds, limit, plan }:
         )}
       </div>
 
-      {notice && <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{notice}</p>}
+      {notice && <p className="rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-300">{notice}</p>}
 
       {PROFILES.map((p) => {
         const rules = catalog.filter((t) => t.profiles.includes(p.key));

@@ -21,25 +21,25 @@
   --orange-bright: #f97316;
   --orange-soft: rgba(234, 88, 12, 0.12);
 
-  /* --- Hérité (clair) : dashboard/login/légal jusqu'à leur migration --- */
-  --canvas: #fafbfa;
-  --canvas-warm: #f5f2ec;
-  --paper: #ffffff;
-  --ink-50: #f5f7f6;
-  --ink-100: #e8ecea;
-  --ink-200: #d2d9d5;
-  --ink-300: #adb7b2;
-  --ink-400: #828d88;
-  --ink-500: #5c6661;
-  --ink-600: #404846;
-  --ink-700: #2a3230;
-  --ink-900: #0e1413;
-  --ink-950: #060908;
-  --mint-50: #ecfdf5;
-  --mint-100: #d1fae5;
-  --mint-300: #6ee7b7;
-  --mint-400: #34d399;
-  --mint-500: #10b981;
+  /* --- Hérité, REMAPPÉ vers le sombre DA (l'app migre d'un coup) --- */
+  --canvas: #0f172a;        /* void */
+  --canvas-warm: #0b1120;   /* void-2 */
+  --paper: #1e293b;         /* surface */
+  --ink-50: #1e293b;
+  --ink-100: #273549;
+  --ink-200: #334155;       /* line */
+  --ink-300: #475569;
+  --ink-400: #64748b;       /* muted */
+  --ink-500: #94a3b8;       /* secondaire */
+  --ink-600: #cbd5e1;
+  --ink-700: #e2e8f0;
+  --ink-900: #f8fafc;       /* off, texte primaire */
+  --ink-950: #0b1120;       /* gardé sombre (overlays) ; CTAs passés en orange */
+  --mint-50: rgba(234, 88, 12, 0.12);
+  --mint-100: rgba(234, 88, 12, 0.18);
+  --mint-300: #fb923c;
+  --mint-400: #f97316;      /* orange-bright */
+  --mint-500: #ea580c;      /* orange */
 }
 
 @theme inline {
@@ -80,10 +80,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Corps clair par défaut (app) ; la landing pose son propre fond sombre. */
+/* Tout est sombre (charte DA). */
+:root { color-scheme: dark; }
 body {
-  background: var(--canvas);
-  color: var(--ink-900);
+  background: var(--void);
+  color: var(--off);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 

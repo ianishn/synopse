@@ -19,7 +19,7 @@ function CopyBlock({ label, value }: { label: string; value: string }) {
           {copied ? "Copié ✓" : "Copier"}
         </button>
       </div>
-      <code className="block overflow-x-auto rounded-lg bg-ink-950 p-3 font-mono text-xs text-mint-300">{value}</code>
+      <code className="block overflow-x-auto rounded-lg bg-void-2 border border-line p-3 font-mono text-xs text-orange">{value}</code>
     </div>
   );
 }
@@ -58,10 +58,10 @@ export function ConnectFlow() {
       <div className="rounded-2xl border border-ink-100 bg-paper p-8 text-center">
         <p className="text-ink-500">Génère un token unique pour relier ton agent à Synopse.</p>
         <button disabled={busy} onClick={generate}
-          className="mt-5 rounded-full bg-ink-950 px-6 py-3 font-semibold text-white transition hover:bg-ink-700 disabled:opacity-50">
+          className="mt-5 rounded-full bg-orange px-6 py-3 font-semibold text-white transition hover:bg-orange-bright disabled:opacity-50">
           {busy ? "…" : "Générer mon token de connexion"}
         </button>
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
       </div>
     );
   }

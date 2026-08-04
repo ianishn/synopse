@@ -48,7 +48,7 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
             <Link key={k} href={k ? `?f=${k}` : "?"}
               className={`rounded-full px-4 py-1.5 transition ${
                 f === k || (!f && !k)
-                  ? "bg-ink-950 text-white"
+                  ? "bg-orange text-white"
                   : "border border-ink-200 text-ink-600 hover:border-ink-400"
               }`}>
               {label}

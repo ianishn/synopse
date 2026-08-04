@@ -14,7 +14,7 @@ const STEPS: Step[] = [
     body: "Génère un token depuis « Connecter un agent », colle-le chez ton agent, active le plugin. Synopse se relie tout seul.",
     visual: () => (
       <div className="space-y-2">
-        <code className="pop-in block rounded-lg bg-ink-950 p-2 font-mono text-[0.7rem] text-mint-300">SYNOPSE_AGENT_TOKEN=syn_••••</code>
+        <code className="pop-in block rounded-lg bg-void-2 border border-line p-2 font-mono text-[0.7rem] text-orange">SYNOPSE_AGENT_TOKEN=syn_••••</code>
         <p className="pop-in flex items-center gap-2 text-sm text-mint-500" style={{ animationDelay: "0.4s" }}>
           <span className="h-2 w-2 rounded-full bg-mint-500" /> Plugin activé, agent connecté
         </p>
@@ -42,7 +42,7 @@ const STEPS: Step[] = [
       <div className="pop-in rounded-xl border border-mint-300 bg-mint-50 p-3 text-sm">
         <p className="font-medium">⚠️ Sam veut envoyer 47 fichiers vers un domaine inconnu</p>
         <div className="mt-2 flex gap-2">
-          <span className="rounded-full bg-ink-950 px-3 py-1 text-xs font-semibold text-white">Refuser</span>
+          <span className="rounded-full bg-orange px-3 py-1 text-xs font-semibold text-white">Refuser</span>
           <span className="rounded-full border border-ink-200 px-3 py-1 text-xs">Autoriser</span>
         </div>
       </div>
@@ -56,7 +56,7 @@ const STEPS: Step[] = [
         <span className="flex items-center gap-2 font-medium">Sam <span className="inline-flex items-center gap-1 text-ink-500"><span className="h-2 w-2 rounded-full bg-mint-500" />Actif</span></span>
         <span className="flex gap-2">
           <span className="rounded-full border border-ink-200 px-3 py-1 text-xs">Geler</span>
-          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs text-red-600">Supprimer</span>
+          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs text-red-400">Supprimer</span>
         </span>
       </div>
     ),
@@ -97,7 +97,7 @@ export function TutorialModal({ defaultOpen = false, label = "Comment ça marche
       </button>
 
       {open && (
-        <div className="overlay-in fixed inset-0 z-50 flex items-center justify-center bg-ink-950/40 p-4 backdrop-blur-sm"
+        <div className="overlay-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={close}>
           <div role="dialog" aria-modal="true" aria-labelledby="tuto-title"
             onClick={(e) => e.stopPropagation()}
@@ -128,11 +128,11 @@ export function TutorialModal({ defaultOpen = false, label = "Comment ça marche
                   </button>
                 )}
                 {last ? (
-                  <a href="/dashboard/connect" className="rounded-full bg-ink-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-700">
+                  <a href="/dashboard/connect" className="rounded-full bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-bright">
                     Connecter mon agent
                   </a>
                 ) : (
-                  <button onClick={() => setI(i + 1)} className="rounded-full bg-ink-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-700">
+                  <button onClick={() => setI(i + 1)} className="rounded-full bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-bright">
                     Suivant
                   </button>
                 )}

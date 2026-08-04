@@ -88,7 +88,7 @@ export default function LoginPage() {
             value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8}
           />
           <button
-            className="w-full rounded-xl bg-ink-950 py-3 text-sm font-semibold text-white transition hover:bg-ink-700 disabled:opacity-50"
+            className="w-full rounded-xl bg-orange py-3 text-sm font-semibold text-white transition hover:bg-orange-bright disabled:opacity-50"
             type="submit" disabled={busy}
           >
             {busy ? "…" : mode === "signin" ? "Se connecter" : "Créer mon compte"}
@@ -107,7 +107,7 @@ export default function LoginPage() {
         </button>
 
         {notice && <p className="mt-4 rounded-xl bg-mint-50 px-4 py-3 text-sm text-ink-700">{notice}</p>}
-        {error && <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+        {error && <p className="mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
 
         <button
           className="mt-6 w-full text-center text-sm text-ink-500 hover:text-ink-900"

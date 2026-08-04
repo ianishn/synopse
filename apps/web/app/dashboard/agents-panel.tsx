@@ -76,24 +76,24 @@ export function AgentsPanel({ agents, spendByAgent }: { agents: AgentRow[]; spen
                 className={`rounded-full px-4 py-2 text-sm font-medium transition disabled:opacity-50 ${
                   a.status === "frozen"
                     ? "bg-mint-500 text-white hover:bg-mint-400"
-                    : "border border-ink-200 text-ink-700 hover:border-red-300 hover:text-red-600"
+                    : "border border-ink-200 text-ink-700 hover:border-red-500/50 hover:text-red-400"
                 }`}>
                 {a.status === "frozen" ? "Dégeler" : "Geler"}
               </button>
               <button disabled={busy} onClick={() => setConfirmId(confirmId === a.id ? null : a.id)}
                 aria-label={`Supprimer ${a.name}`}
-                className="rounded-full border border-ink-200 px-3 py-2 text-sm text-ink-500 transition hover:border-red-300 hover:text-red-600 disabled:opacity-50">
+                className="rounded-full border border-ink-200 px-3 py-2 text-sm text-ink-500 transition hover:border-red-500/50 hover:text-red-400 disabled:opacity-50">
                 Supprimer
               </button>
             </div>
           </div>
 
           {confirmId === a.id && (
-            <div className="mt-4 flex flex-col items-start justify-between gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm sm:flex-row sm:items-center">
-              <span className="text-red-700">Supprimer « {a.name} » et tout son historique ? Irréversible.</span>
+            <div className="mt-4 flex flex-col items-start justify-between gap-3 rounded-xl bg-red-500/10 px-4 py-3 text-sm sm:flex-row sm:items-center">
+              <span className="text-red-300">Supprimer « {a.name} » et tout son historique ? Irréversible.</span>
               <div className="flex shrink-0 gap-2">
                 <button disabled={busy} onClick={() => remove(a)}
-                  className="rounded-full bg-red-600 px-4 py-1.5 font-medium text-white transition hover:bg-red-500 disabled:opacity-50">
+                  className="rounded-full bg-red-600 px-4 py-1.5 font-medium text-white transition hover:bg-red-500/100 disabled:opacity-50">
                   Oui, supprimer
                 </button>
                 <button disabled={busy} onClick={() => setConfirmId(null)}
