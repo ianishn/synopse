@@ -1,26 +1,32 @@
-# HANDOFF — état du projet (sauvegarde nuit du 2026-08-04)
+# HANDOFF — état du projet (nuit du 2026-08-04)
 
-Snapshot pour reprise. Le repo GitHub (`main` = prod, `build-v1` = travail) contient tout ;
-chaque étape ci-dessous est committée au fur et à mesure (rien perdu si l'ordi s'éteint).
+Tout est committé sur `main` (prod) et `build-v1`. Landing + app entièrement en charte DA sombre.
 
-## Où on en est
-Les 7 étapes de la spec sont faites (voir `docs/VALIDATION-V1.md`). La **charte V1.0** (sombre
-Void Slate + Signal Orange + Geist, logo losange) est appliquée à la **landing** (Direction A
-démo-first, FR + EN sur `/` et `/en`, image de fond Higgsfield, zéro tiret cadratin, vrai logo).
+## Construit cette nuit (déployé prod + preview)
+1. **Tout l'app migré en thème sombre DA** : dashboard, login, journal, règles, connect, tuto,
+   pages légales, billing (Void Slate + Signal Orange + Geist). Blocs code restés sombres.
+2. **Interface admin `/admin`** : KPIs (utilisateurs, payants, MRR/ARR estimés, conversion),
+   répartition par forfait, courbe d'évolution (SVG, palette validée dataviz), table users + emails.
+   Accès réservé via `ADMIN_EMAILS`. Lien "Admin" visible dans le dashboard pour les admins.
+3. **Checkout annuel** : bascule mensuel/annuel dans la carte billing + landing. Prix Stripe
+   annuels créés (Protégé 90 €, Studio 190 €).
 
-## Ce que je construis cette nuit (en autonomie, à revoir demain)
-1. **Migration de tout l'app en thème sombre DA** : dashboard, login, journal, règles, connect,
-   tuto, pages légales, billing. (Ils étaient encore en clair.)
-2. **Interface admin** `/admin` (gated par `ADMIN_EMAILS`) : liste users + emails, abonnements,
-   revenus (MRR/ARR), nombre d'abonnés par forfait, courbe d'évolution dans le temps.
-3. **Checkout annuel** : billing card + route checkout avec intervalle mensuel/annuel (prix Stripe
-   annuels déjà créés : Protégé 90 €, Studio 190 €).
+## ⚠️ À FAIRE pour activer en prod (actions manuelles)
+1. **Migration Supabase** : appliquer `supabase/migrations/0005_subscriptions_created_at.sql`
+   (SQL Editor). Sans elle, l'admin affiche tout le monde en "Gratuit" et 0 € de revenus.
+2. **Vercel → Environment Variables** (Production + Preview) :
+   - `ADMIN_EMAILS` = ton email de connexion (ex. `hein.ianis@gmail.com`). Sans lui, `/admin`
+     est inaccessible (redirige vers le dashboard) — c'est le comportement sûr par défaut.
+   - `STRIPE_PRICE_PROTEGE_ANNUAL`, `STRIPE_PRICE_STUDIO_ANNUAL` (déjà dans `.env.vercel`).
+3. Rappels non bloquants : `STRIPE_WEBHOOK_SECRET` (prod), webhook Telegram prod (`docs/BACKEND.md`).
 
-## Config à poser dans Vercel (avant que ces features marchent en prod)
-- `STRIPE_PRICE_PROTEGE_ANNUAL`, `STRIPE_PRICE_STUDIO_ANNUAL` (déjà dans `.env.vercel`)
-- `ADMIN_EMAILS` = ton/tes emails de connexion admin (ex. `hein.ianis@gmail.com`)
-- Rappels non bloquants : `STRIPE_WEBHOOK_SECRET` (prod), webhook Telegram prod (voir `docs/BACKEND.md`).
+## À revoir demain (points de design connus)
+- Statut "Actif" des agents affiché en orange (pas de vert dans la charte) — à valider ou ajuster.
+- L'admin n'a pas de tooltips au survol sur la courbe (v1 statique avec labels directs).
+- MRR = estimation (prix mensuel × abonnés actifs) ; l'intervalle réel n'est pas stocké.
+- Migration DA faite par remappage des tokens : quelques nuances (rouge destructif, ambre) à
+  vérifier visuellement page par page.
 
 ## Repères
-- Doc de maintenance : `docs/BACKEND.md` · Design : `DA/` + `apps/web/app/globals.css`
-- ⚠️ OneDrive corrompt `apps/web/.next` : `rm -rf` avant build local.
+`docs/BACKEND.md` (maintenance) · `docs/VALIDATION-V1.md` (tests) · `DA/` (charte) ·
+`apps/web/app/globals.css` (tokens) · ⚠️ OneDrive corrompt `apps/web/.next` (rm -rf avant build).
