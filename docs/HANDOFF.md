@@ -1,41 +1,50 @@
-# HANDOFF — état du projet (nuit du 2026-08-04)
+# HANDOFF — état du projet (sauvegarde 2026-08-05)
 
-Tout est committé sur `main` (prod) et `build-v1`. Landing + app entièrement en charte DA sombre.
+Tout est committé et poussé sur `main` (prod) et `build-v1`. Dernier commit : `01fa2f9`.
+Reprise possible depuis n'importe quelle machine avec `git clone` + `.env.local` (voir `.env.vercel`).
 
-## Construit cette nuit (déployé prod + preview)
-1. **Tout l'app migré en thème sombre DA** : dashboard, login, journal, règles, connect, tuto,
-   pages légales, billing (Void Slate + Signal Orange + Geist). Blocs code restés sombres.
-2. **Interface admin `/admin`** : KPIs (utilisateurs, payants, MRR/ARR estimés, conversion),
-   répartition par forfait, courbe d'évolution (SVG, palette validée dataviz), table users + emails.
-   Accès réservé via `ADMIN_EMAILS`. Lien "Admin" visible dans le dashboard pour les admins.
-3. **Checkout annuel** : bascule mensuel/annuel dans la carte billing + landing. Prix Stripe
-   annuels créés (Protégé 90 €, Studio 190 €).
+## Ce qui existe aujourd'hui
 
-## Tableau de bord « salle de contrôle » (fait, charte exacte)
-Refonte complète du dashboard (`/dashboard`) en 8 modules : en-tête d'état, actions en attente
-(temps réel Supabase Realtime + décision web symétrique à Telegram), agents + métriques 30 j,
-règles actives (toggles + compteurs), dépenses & plafond (graphe par jour + réglage), kill switch
-+ bandeau d'alerte permanent, journal, compte & abonnement (récap offres, bascule mensuel/annuel).
-Charte V1.0 exacte (5 couleurs + statuts vert/ambre/rouge), grille technique, monospace pour les données.
-⚠️ **Appliquer `supabase/migrations/0006_realtime.sql`** pour que le temps réel pousse les nouvelles
-approbations sans rechargement (sinon elles apparaissent au chargement de la page, décisions OK).
+### Produit (spec V1 : 7 étapes bouclées)
+F1 pairing · F2 règles+catalogue (16 règles FR, 3 profils) · F3 interception (validé E2E, 5 scénarios
+d'attaque, voir `docs/VALIDATION-V1.md`) · F4 plafonds · F5 kill switch · F6 heartbeat · F7 journal +
+rapport hebdo · F8 billing Stripe (mensuel + annuel) · F9 landing.
+Sécurité durcie (audit dans `docs/BACKEND.md §6quater`) : CSP, webhook Stripe fail-closed, crons Bearer-only.
 
-## ⚠️ À FAIRE pour activer en prod (actions manuelles)
-1. **Migration Supabase** : appliquer `supabase/migrations/0005_subscriptions_created_at.sql`
-   (SQL Editor). Sans elle, l'admin affiche tout le monde en "Gratuit" et 0 € de revenus.
-2. **Vercel → Environment Variables** (Production + Preview) :
-   - `ADMIN_EMAILS` = ton email de connexion (ex. `hein.ianis@gmail.com`). Sans lui, `/admin`
-     est inaccessible (redirige vers le dashboard) — c'est le comportement sûr par défaut.
-   - `STRIPE_PRICE_PROTEGE_ANNUAL`, `STRIPE_PRICE_STUDIO_ANNUAL` (déjà dans `.env.vercel`).
-3. Rappels non bloquants : `STRIPE_WEBHOOK_SECRET` (prod), webhook Telegram prod (`docs/BACKEND.md`).
+### Design (charte V1.0 du dossier `DA/`)
+Sombre Void Slate `#0F172A` + Signal Orange `#EA580C` + Geist. Logo = PNG fourni (`/synopse-logo.png`).
+Composants 21st.dev rebrandés DA dans `apps/web/components/ui/` :
+`falling-pattern` (fond animé), `glow-card` (tuiles à blob), `border-beam`, `button-colorful`,
+`progress-bar`, `password-strength`, `orbiting-agents` (logos IA réels dans `/public/agents/`),
+`app-header` (bandeau logo + nav pastilles + FR/EN), `lang-switch`.
+Landing : hero démo-first, pipeline d'attaque animé (`app/landing/pipeline.tsx`), section Installation
+en contraste inversé (fond clair), orbites d'agents, pricing GlowCard.
 
-## À revoir demain (points de design connus)
-- Statut "Actif" des agents affiché en orange (pas de vert dans la charte) — à valider ou ajuster.
-- L'admin n'a pas de tooltips au survol sur la courbe (v1 statique avec labels directs).
-- MRR = estimation (prix mensuel × abonnés actifs) ; l'intervalle réel n'est pas stocké.
-- Migration DA faite par remappage des tokens : quelques nuances (rouge destructif, ambre) à
-  vérifier visuellement page par page.
+### i18n
+Cookie `lang` posé par la landing (`/` = fr, `/en` = en) + bouton FR/EN dans l'app.
+Dictionnaire : `lib/lang.ts` (client+serveur), lecture cookie : `lib/lang-server.ts`.
+Traduits : landing, login, dashboard, admin.
 
-## Repères
-`docs/BACKEND.md` (maintenance) · `docs/VALIDATION-V1.md` (tests) · `DA/` (charte) ·
-`apps/web/app/globals.css` (tokens) · ⚠️ OneDrive corrompt `apps/web/.next` (rm -rf avant build).
+### Plans (enforcement vérifié E2E)
+`lib/plan.ts` (limites) + `lib/enforce-plan.ts` (mise en conformité à la baisse de plan).
+Gratuit : 1 agent, 3 règles, journal 7 j, pas de plafonds. Protégé : illimité + plafonds + journal 90 j.
+Studio : 5 agents.
+**Anti-bypass** : la config servie au plugin est plafonnée par le plan (`lib/compile-config.ts`), et une
+baisse de plan désactive les règles en trop + retire les plafonds (branché sur webhook Stripe ET outil admin).
+
+## À FAIRE (actions manuelles, non bloquantes)
+1. Migrations Supabase à appliquer si pas déjà fait : `0005_subscriptions_created_at.sql`, `0006_realtime.sql`.
+2. Vercel env : `ADMIN_EMAILS`, prix annuels, `STRIPE_WEBHOOK_SECRET` (voir `.env.vercel`).
+3. Webhook Telegram prod + pinger cron externe (voir `docs/BACKEND.md §5, §6bis`).
+
+## Prochaines pistes (rien en cours, à ton choix)
+- Traduire les pages restantes : compte, connect, tuto, journal, règles, légal.
+- Passer les modules restants du dashboard en GlowCard (règles, journal, kill switch, abonnement).
+- Sentry (surveillance d'erreurs) : jamais posé.
+- Reste des retours design sur la landing (fond, tuiles, pipeline).
+
+## Pièges connus
+- ⚠️ **OneDrive corrompt `apps/web/.next`** : si build échoue avec `EINVAL readlink`, faire
+  `rm -rf apps/web/.next` (parfois 2 fois) puis rebuild. Idéalement, sortir le repo de OneDrive.
+- Serveurs zombies sur le port 3000 : tuer via netstat/taskkill avant `pnpm dev`.
+- Les composants client ne doivent PAS importer `lib/lang-server.ts` (next/headers = serveur only).
