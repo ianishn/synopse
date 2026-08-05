@@ -2,6 +2,7 @@
 /** Module 3 — Mes agents : statut, dernier heartbeat, métriques 30 j, gestion. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { UI, type Lang } from "@/lib/lang";
 import { GlowCard } from "@/components/ui/glow-card";
 
 type AgentRow = {
@@ -10,9 +11,9 @@ type AgentRow = {
 };
 
 const STATUS: Record<string, { dot: string; label: string; cls: string }> = {
-  active: { dot: "bg-green-500", label: "En ligne", cls: "text-green-400" },
-  silent: { dot: "bg-amber-500", label: "Injoignable", cls: "text-amber-400" },
-  frozen: { dot: "bg-red-500", label: "Gelé", cls: "text-red-400" },
+  active: { dot: "bg-green-500", label: "online", cls: "text-green-400" },
+  silent: { dot: "bg-amber-500", label: "unreachable", cls: "text-amber-400" },
+  frozen: { dot: "bg-red-500", label: "frozenLabel", cls: "text-red-400" },
 };
 
 function heartbeat(ts: string | null): string {
@@ -24,7 +25,8 @@ function heartbeat(ts: string | null): string {
   return `il y a ${Math.floor(s / 86400)} j`;
 }
 
-export function AgentsPanel({ agents, maxAgents }: { agents: AgentRow[]; maxAgents: number }) {
+export function AgentsPanel({ agents, maxAgents, lang }: { agents: AgentRow[]; maxAgents: number; lang: Lang }) {
+  const ui = UI[lang];
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -46,12 +48,12 @@ export function AgentsPanel({ agents, maxAgents }: { agents: AgentRow[]; maxAgen
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
           Mes agents <span className="ml-1 font-mono text-xs text-line">{agents.length}/{maxAgents === Infinity ? "∞" : maxAgents}</span>
         </h2>
-        {agents.length < maxAgents && <a href="/dashboard/connect" className="text-sm font-medium text-orange hover:text-orange-bright">+ Connecter un agent</a>}
+        {agents.length < maxAgents && <a href="/dashboard/connect" className="text-sm font-medium text-orange hover:text-orange-bright">{ui.connectAgent}</a>}
       </div>
 
       {agents.length === 0 && (
         <a href="/dashboard/connect" className="block rounded-xl border border-dashed border-line py-10 text-center text-sm text-muted transition hover:border-orange hover:text-off">
-          Aucun agent connecté. <span className="font-medium text-orange">Connecte ton premier agent</span> pour le protéger en 3 minutes.
+          {ui.noAgent} <span className="font-medium text-orange">{ui.connectFirst}</span>
         </a>
       )}
 
@@ -62,29 +64,29 @@ export function AgentsPanel({ agents, maxAgents }: { agents: AgentRow[]; maxAgen
             <div className="flex items-center justify-between px-5 py-4">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="font-semibold text-off">{a.name}</span>
-                <span className={`inline-flex items-center gap-1.5 text-sm ${st.cls}`}><span className={`h-2 w-2 rounded-full ${st.dot}`} />{st.label}</span>
+                <span className={`inline-flex items-center gap-1.5 text-sm ${st.cls}`}><span className={`h-2 w-2 rounded-full ${st.dot}`} />{ui[st.label as "online" | "unreachable" | "frozenLabel"]}</span>
                 <span className="font-mono text-xs text-muted">· {heartbeat(a.last_heartbeat_at)}</span>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <button disabled={busy} onClick={() => toggleFreeze(a)}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition disabled:opacity-50 ${a.status === "frozen" ? "border border-line text-off hover:border-s400" : "border border-line text-muted hover:border-red-500/50 hover:text-red-400"}`}>
-                  {a.status === "frozen" ? "Dégeler" : "Geler"}
+                  {a.status === "frozen" ? ui.unfreeze : ui.freeze}
                 </button>
                 <button disabled={busy} onClick={() => setConfirmId(confirmId === a.id ? null : a.id)}
-                  className="rounded-full border border-line px-3.5 py-1.5 text-xs text-muted transition hover:border-red-500/50 hover:text-red-400 disabled:opacity-50">Supprimer</button>
+                  className="rounded-full border border-line px-3.5 py-1.5 text-xs text-muted transition hover:border-red-500/50 hover:text-red-400 disabled:opacity-50">{ui.del}</button>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-px border-t border-line bg-line/40">
-              <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-off">{a.actions30d.toLocaleString("fr-FR")}</div><div className="text-xs text-muted">Actions, 30 j</div></div>
-              <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-orange-bright">{a.interceptions}</div><div className="text-xs text-muted">Interceptions</div></div>
-              <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-off">{a.monthCost.toFixed(2)} €</div><div className="text-xs text-muted">Coût du mois</div></div>
+              <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-off">{a.actions30d.toLocaleString(lang === "en" ? "en-GB" : "fr-FR")}</div><div className="text-xs text-muted">{ui.actions30d}</div></div>
+              <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-orange-bright">{a.interceptions}</div><div className="text-xs text-muted">{ui.interceptions}</div></div>
+              <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-off">{a.monthCost.toFixed(2)} €</div><div className="text-xs text-muted">{ui.monthCost}</div></div>
             </div>
             {confirmId === a.id && (
               <div className="flex flex-col items-start justify-between gap-2 border-t border-line bg-red-500/5 px-5 py-3 text-sm sm:flex-row sm:items-center">
-                <span className="text-red-300">Supprimer « {a.name} » et tout son historique ? Irréversible.</span>
+                <span className="text-red-300">{ui.del} « {a.name} » {ui.confirmDelete}</span>
                 <div className="flex shrink-0 gap-2">
-                  <button disabled={busy} onClick={() => remove(a)} className="rounded-full bg-red-600 px-4 py-1.5 font-medium text-white transition hover:bg-red-500 disabled:opacity-50">Oui, supprimer</button>
-                  <button onClick={() => setConfirmId(null)} className="rounded-full border border-line px-4 py-1.5 transition hover:border-s400">Annuler</button>
+                  <button disabled={busy} onClick={() => remove(a)} className="rounded-full bg-red-600 px-4 py-1.5 font-medium text-white transition hover:bg-red-500 disabled:opacity-50">{ui.yesDelete}</button>
+                  <button onClick={() => setConfirmId(null)} className="rounded-full border border-line px-4 py-1.5 transition hover:border-s400">{ui.cancel}</button>
                 </div>
               </div>
             )}

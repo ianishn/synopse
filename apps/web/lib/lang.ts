@@ -2,14 +2,7 @@
  * Langue de l'app (hors landing). Mémorisée dans un cookie `lang`, posé automatiquement
  * quand l'utilisateur visite /en, et changeable depuis l'app (bouton FR/EN).
  */
-import { cookies } from "next/headers";
-
 export type Lang = "fr" | "en";
-
-export async function getLang(): Promise<Lang> {
-  const c = await cookies();
-  return c.get("lang")?.value === "en" ? "en" : "fr";
-}
 
 /** Libellés de l'app (dashboard, admin, compte). */
 export const UI = {
@@ -28,6 +21,37 @@ export const UI = {
     pilot: "Pilotage", users: "Utilisateurs", revenue: "MRR estimé", arr: "ARR estimé",
     paidSubs: "Abonnés payants", conversion: "Conversion", byPlan: "Répartition par forfait",
     evolution: "Évolution dans le temps", email: "Email", signedUp: "Inscrit le", plan: "Forfait",
+    // Dashboard détaillé
+    dashSub: "Tes agents protégés, en un coup d'œil.", howItWorks: "Comment ça marche ?",
+    online: "En ligne", unreachable: "Injoignable", frozenLabel: "Gelé",
+    freeze: "Geler", unfreeze: "Dégeler", del: "Supprimer",
+    actions30d: "Actions, 30 j", interceptions: "Interceptions", monthCost: "Coût du mois",
+    neverSeen: "jamais vu", ago: "il y a",
+    confirmDelete: "et tout son historique ? Irréversible.", yesDelete: "Oui, supprimer", cancel: "Annuler",
+    noRules: "Aucune règle active.", activateProfile: "Active un profil (Perso / Commerçant / Builder)",
+    inOneClick: "en un clic.", triggers: "déclenchement", block: "Bloquer", ask: "Demander", notify: "Notifier",
+    spentThisMonth: "consommé ce mois", ofCap: "% du plafond", alert: "alerte",
+    perDay: "Par jour · 30 derniers jours", noSpend: "Aucune dépense enregistrée pour l'instant.",
+    byAgent: "Répartition par agent", capFeature: "Plafonds de dépense",
+    capDesc: ", alerte à 80 % et blocage automatique au plafond.", inProtege: "Inclus dans Protégé",
+    killDesc: "Gèle instantanément tous les appels d'outils de tes agents. Prise d'effet en moins de 30 s.",
+    allFine: "Tout va bien, agents actifs", agentsFrozen: "Tes agents sont gelés",
+    freezeAll: "Tout geler", confirmFreeze: "Confirmer le gel",
+    frozenBanner: "Agents GELÉS, toute action est refusée.", unfreezeAgents: "Dégeler mes agents",
+    noEvents: "Aucun événement pour l'instant.", pendingTitle: "en attente de ta validation",
+    refuse: "Refuser", allowOnce: "Autoriser une fois", seeDetail: "Voir le détail", rule: "Règle",
+    currentPlan: "Plan actuel", nextDue: "Prochaine échéance", manage: "Gérer", stripePortal: "Portail Stripe",
+    monthly: "Mensuel", annual: "Annuel", monthsFree: "(2 mois offerts)", yourPlan: "Ton plan",
+    recommended: "Recommandé", switchTo: "Passer à", perMonth: "/mois",
+    // Login
+    welcomeBack: "Ravi de te revoir", protectAgent: "Protège ton agent",
+    signinSub: "Connecte-toi à ta tour de contrôle.", signupSub: "Compte gratuit, aucune carte requise.",
+    emailPh: "Adresse email", pwdPh: "Mot de passe", signin: "Se connecter", createAccount: "Créer mon compte",
+    or: "ou", googleBtn: "Continuer avec Google",
+    noAccount: "Pas encore de compte ? Créer un compte", hasAccount: "Déjà un compte ? Se connecter",
+    freeNoCard: "Gratuit · sans carte ·", in3min: "protégé en 3 minutes",
+    checkMail: "Compte créé. Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.",
+    genericError: "Une erreur est survenue.", googleUnavailable: "Connexion Google indisponible.",
   },
   en: {
     rules: "Rules", journal: "Log", account: "Account", admin: "Admin", signout: "Sign out",
@@ -44,5 +68,36 @@ export const UI = {
     pilot: "Control", users: "Users", revenue: "Est. MRR", arr: "Est. ARR",
     paidSubs: "Paying subscribers", conversion: "Conversion", byPlan: "Breakdown by plan",
     evolution: "Over time", email: "Email", signedUp: "Signed up", plan: "Plan",
+    // Dashboard detail
+    dashSub: "Your protected agents, at a glance.", howItWorks: "How does it work?",
+    online: "Online", unreachable: "Unreachable", frozenLabel: "Frozen",
+    freeze: "Freeze", unfreeze: "Unfreeze", del: "Delete",
+    actions30d: "Actions, 30 d", interceptions: "Interceptions", monthCost: "Cost this month",
+    neverSeen: "never seen", ago: "",
+    confirmDelete: "and all its history? This cannot be undone.", yesDelete: "Yes, delete", cancel: "Cancel",
+    noRules: "No active rule.", activateProfile: "Turn on a profile (Personal / Shop / Builder)",
+    inOneClick: "in one click.", triggers: "trigger", block: "Block", ask: "Ask", notify: "Notify",
+    spentThisMonth: "spent this month", ofCap: "% of cap", alert: "alert",
+    perDay: "Per day · last 30 days", noSpend: "No spending recorded yet.",
+    byAgent: "Breakdown by agent", capFeature: "Spending caps",
+    capDesc: ", alert at 80% and automatic block at the cap.", inProtege: "Included in Protected",
+    killDesc: "Instantly freezes every tool call from your agents. Takes effect in under 30 s.",
+    allFine: "All clear, agents active", agentsFrozen: "Your agents are frozen",
+    freezeAll: "Freeze everything", confirmFreeze: "Confirm freeze",
+    frozenBanner: "Agents FROZEN, every action is refused.", unfreezeAgents: "Unfreeze my agents",
+    noEvents: "No events yet.", pendingTitle: "awaiting your approval",
+    refuse: "Refuse", allowOnce: "Allow once", seeDetail: "See detail", rule: "Rule",
+    currentPlan: "Current plan", nextDue: "Next payment", manage: "Manage", stripePortal: "Stripe portal",
+    monthly: "Monthly", annual: "Annual", monthsFree: "(2 months free)", yourPlan: "Your plan",
+    recommended: "Recommended", switchTo: "Switch to", perMonth: "/mo",
+    // Login
+    welcomeBack: "Welcome back", protectAgent: "Protect your agent",
+    signinSub: "Sign in to your control room.", signupSub: "Free account, no card required.",
+    emailPh: "Email address", pwdPh: "Password", signin: "Sign in", createAccount: "Create my account",
+    or: "or", googleBtn: "Continue with Google",
+    noAccount: "No account yet? Create one", hasAccount: "Already have an account? Sign in",
+    freeNoCard: "Free · no card ·", in3min: "protected in 3 minutes",
+    checkMail: "Account created. Check your inbox to confirm your address, then sign in.",
+    genericError: "Something went wrong.", googleUnavailable: "Google sign-in unavailable.",
   },
 } as const;

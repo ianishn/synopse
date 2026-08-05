@@ -10,7 +10,8 @@ import { EvolutionChart } from "./chart";
 import { PlanControl } from "./plan-control";
 import { FallingPattern } from "@/components/ui/falling-pattern";
 import { LangSwitch } from "@/components/ui/lang-switch";
-import { getLang, UI } from "@/lib/lang";
+import { UI } from "@/lib/lang";
+import { getLang } from "@/lib/lang-server";
 
 export const dynamic = "force-dynamic";
 

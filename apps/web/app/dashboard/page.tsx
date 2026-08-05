@@ -16,8 +16,9 @@ import { RulesSummary } from "./rules-summary";
 import { SubscriptionRecap } from "./subscription-recap";
 import { TutorialModal } from "./tutorial-modal";
 import { FallingPattern } from "@/components/ui/falling-pattern";
-import { LangSwitch } from "@/components/ui/lang-switch";
-import { getLang, UI } from "@/lib/lang";
+import { AppHeader } from "@/components/ui/app-header";
+import { UI } from "@/lib/lang";
+import { getLang } from "@/lib/lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -129,29 +130,22 @@ export default async function Dashboard() {
   const capReached = monthlyCap != null && monthTotal >= monthlyCap;
   const incident = anyFrozen || anySilent || capReached;
   const header = anyFrozen
-    ? { cls: "border-red-500/60 bg-red-500/10 text-red-300", dot: "bg-red-500", text: "Incident, tes agents sont gelés." }
-    : anySilent ? { cls: "border-amber-500/50 bg-amber-500/10 text-amber-300", dot: "bg-amber-500", text: "Attention, un agent ne répond plus." }
-    : capReached ? { cls: "border-amber-500/50 bg-amber-500/10 text-amber-300", dot: "bg-amber-500", text: "Plafond de dépense atteint." }
-    : pending.length ? { cls: "border-amber-500/50 bg-amber-500/10 text-amber-300", dot: "bg-amber-500", text: `${pending.length} action(s) attendent ta validation.` }
-    : { cls: "border-line bg-void text-s400", dot: "bg-green-500", text: "Tout va bien. Tes agents sont surveillés." };
+    ? { cls: "border-red-500/60 bg-red-500/10 text-red-300", dot: "bg-red-500", text: ui.frozen }
+    : anySilent ? { cls: "border-amber-500/50 bg-amber-500/10 text-amber-300", dot: "bg-amber-500", text: ui.silent }
+    : capReached ? { cls: "border-amber-500/50 bg-amber-500/10 text-amber-300", dot: "bg-amber-500", text: ui.capReached }
+    : pending.length ? { cls: "border-amber-500/50 bg-amber-500/10 text-amber-300", dot: "bg-amber-500", text: `${pending.length} ${pending.length > 1 ? ui.pendingMany : ui.pendingOne}` }
+    : { cls: "border-line bg-void text-s400", dot: "bg-green-500", text: ui.allGood };
 
   return (
     <div className="relative min-h-screen">
       <FallingPattern className="fixed inset-0 -z-10 opacity-60" duration={52} blurIntensity="0.55em" dotSize={2.6} />
-      {anyFrozen && <FrozenBanner />}
-      <header className="border-b border-line bg-void">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-          <a href="/dashboard" className="font-display text-lg font-bold tracking-tight text-off">synopse<span className="text-orange">.</span></a>
-          <div className="flex items-center gap-4 text-sm text-muted">
-            {admin && <a className="font-medium text-orange hover:text-orange-bright" href="/admin">{ui.admin}</a>}
-            <LangSwitch lang={lang} />
-            <a className="hover:text-off" href="/dashboard/rules">{ui.rules}</a>
-            <a className="hover:text-off" href="/dashboard/journal">{ui.journal}</a>
-            <a className="hover:text-off" href="/dashboard/account">{ui.account}</a>
-            <form action="/auth/signout" method="post"><button className="hover:text-off">{ui.signout}</button></form>
-          </div>
-        </div>
-      </header>
+      {anyFrozen && <FrozenBanner lang={lang} />}
+      <AppHeader lang={lang} items={[
+        ...(admin ? [{ href: "/admin", label: ui.admin, accent: true }] : []),
+        { href: "/dashboard/rules", label: ui.rules },
+        { href: "/dashboard/journal", label: ui.journal },
+        { href: "/dashboard/account", label: ui.account },
+      ]} />
 
       <main className="mx-auto max-w-4xl space-y-8 px-6 py-8">
         {/* Module 1 — En-tête d'état */}
@@ -160,39 +154,39 @@ export default async function Dashboard() {
             <span className={`h-2.5 w-2.5 rounded-full ${header.dot}`} />
             <span>{header.text}</span>
           </div>
-          <TutorialModal />
+          <TutorialModal label={ui.howItWorks} />
         </div>
 
         {/* Module 2 — Action en attente (temps réel) */}
-        <PendingActions initial={pending} />
+        <PendingActions initial={pending} lang={lang} />
 
         {/* Module 3 — Mes agents */}
-        <AgentsPanel agents={agentRows} maxAgents={maxAgents(plan)} />
+        <AgentsPanel agents={agentRows} maxAgents={maxAgents(plan)} lang={lang} />
 
         {/* Module 4 — Règles actives */}
-        <RulesSummary rules={rulesSummary} />
+        <RulesSummary rules={rulesSummary} lang={lang} />
 
         {/* Module 5 — Dépenses & plafond */}
-        <SpendPanel daily={daily} monthTotal={monthTotal} monthlyCap={monthlyCap} dailyCap={dailyCap} perAgent={perAgentSpend} plan={plan} />
+        <SpendPanel daily={daily} monthTotal={monthTotal} monthlyCap={monthlyCap} dailyCap={dailyCap} perAgent={perAgentSpend} plan={plan} lang={lang} />
 
         {/* Module 6 — Kill switch */}
-        <KillSwitch frozen={anyFrozen} />
+        <KillSwitch frozen={anyFrozen} lang={lang} />
 
         {/* Module 7 — Journal */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Journal</h2>
-            <a href="/dashboard/journal" className="text-sm font-medium text-orange hover:text-orange-bright">Tout voir · {plan === "free" ? "7 j" : "90 j"}</a>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">{ui.journal}</h2>
+            <a href="/dashboard/journal" className="text-sm font-medium text-orange hover:text-orange-bright">{ui.seeAll} · {plan === "free" ? "7 j" : "90 j"}</a>
           </div>
           {(recent ?? []).length === 0 ? (
-            <div className="rounded-xl border border-line bg-void py-8 text-center text-sm text-muted">Aucun événement pour l&apos;instant.</div>
+            <div className="rounded-xl border border-line bg-void py-8 text-center text-sm text-muted">{ui.noEvents}</div>
           ) : (
             <div className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-void">
               {(recent ?? []).map((e) => {
                 const v = VERDICT[e.type] ?? { dot: "bg-muted", label: "Info", cls: "text-s400" };
                 return (
                   <div key={e.id} className="grid grid-cols-[130px_1fr_auto] items-center gap-4 px-5 py-3 text-sm">
-                    <span className="font-mono text-xs text-muted">{new Date(e.created_at).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+                    <span className="font-mono text-xs text-muted">{new Date(e.created_at).toLocaleString(lang === "en" ? "en-GB" : "fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
                     <span className="truncate text-s400"><span className="font-mono text-muted">{names[e.agent_id]}</span> · {e.summary_fr}</span>
                     <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${v.cls}`}><span className={`h-1.5 w-1.5 rounded-full ${v.dot}`} />{v.label}</span>
                   </div>
@@ -203,7 +197,7 @@ export default async function Dashboard() {
         </section>
 
         {/* Module 8 — Compte & abonnement */}
-        <SubscriptionRecap plan={planKey} renewal={renewal} />
+        <SubscriptionRecap plan={planKey} renewal={renewal} lang={lang} />
       </main>
     </div>
   );
