@@ -18,7 +18,7 @@ export function BillingCard({ plan }: { plan: string }) {
   const label = plan === "protege" ? "Protégé" : plan === "studio" ? "Studio" : "Gratuit";
   const interval = annual ? "annual" : "monthly";
   const price = (p: "protege" | "studio") =>
-    annual ? (p === "protege" ? "90 €/an" : "190 €/an") : (p === "protege" ? "9 €/mois" : "19 €/mois");
+    annual ? (p === "protege" ? "99 €/an" : "199 €/an") : (p === "protege" ? "9,99 €/mois" : "19,99 €/mois");
 
   return (
     <section className="space-y-4">

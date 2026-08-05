@@ -55,11 +55,11 @@ export function BillingManager({ plan, renewal, cancelAtEnd, lang }:
           <div className="mt-4 flex flex-wrap gap-2">
             <button disabled={busy} onClick={() => post("/api/billing/checkout", { plan: "protege", interval: annual ? "annual" : "monthly" })}
               className="rounded-full bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-bright disabled:opacity-50">
-              {ui.planProtege}, {annual ? "90 €" : "9 €"}{annual ? "/an" : ui.perMonth}
+              {ui.planProtege}, {annual ? "99 €" : "9,99 €"}{annual ? "/an" : ui.perMonth}
             </button>
             <button disabled={busy} onClick={() => post("/api/billing/checkout", { plan: "studio", interval: annual ? "annual" : "monthly" })}
               className="rounded-full border border-ink-200 px-4 py-2 text-sm font-medium transition hover:border-ink-400 disabled:opacity-50">
-              {ui.planStudio}, {annual ? "190 €" : "19 €"}{annual ? "/an" : ui.perMonth}
+              {ui.planStudio}, {annual ? "199 €" : "19,99 €"}{annual ? "/an" : ui.perMonth}
             </button>
           </div>
         </div>

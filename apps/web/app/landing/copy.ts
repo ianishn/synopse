@@ -44,9 +44,9 @@ export const COPY = {
       plans: [
         { name: "Gratuit", monthly: "0 €", annual: "0 €", note: "", cta: "Commencer gratuitement",
           items: ["1 agent", "3 règles", "Kill switch", "Journal 7 jours"] },
-        { name: "Protégé", monthly: "9 €", annual: "7,50 €", note: "90 €/an, 2 mois offerts", cta: "Choisir Protégé",
+        { name: "Protégé", monthly: "9,99 €", annual: "8,25 €", note: "99 €/an, 2 mois offerts", cta: "Choisir Protégé",
           items: ["Règles illimitées", "Validation Telegram", "Plafonds de dépense", "Rapport hebdo", "Journal 90 jours"] },
-        { name: "Studio", monthly: "19 €", annual: "15,83 €", note: "190 €/an, 2 mois offerts", cta: "Choisir Studio",
+        { name: "Studio", monthly: "19,99 €", annual: "16,58 €", note: "199 €/an, 2 mois offerts", cta: "Choisir Studio",
           items: ["Tout Protégé", "5 agents", "Règles par agent", "Support prioritaire"] },
       ],
       faqTitle: "Questions directes",
@@ -117,9 +117,9 @@ export const COPY = {
       plans: [
         { name: "Free", monthly: "0 €", annual: "0 €", note: "", cta: "Start for free",
           items: ["1 agent", "3 rules", "Kill switch", "7-day log"] },
-        { name: "Protected", monthly: "9 €", annual: "7.50 €", note: "90 €/yr, 2 months free", cta: "Choose Protected",
+        { name: "Protected", monthly: "9.99 €", annual: "8.25 €", note: "99 €/yr, 2 months free", cta: "Choose Protected",
           items: ["Unlimited rules", "Telegram approval", "Spending caps", "Weekly report", "90-day log"] },
-        { name: "Studio", monthly: "19 €", annual: "15.83 €", note: "190 €/yr, 2 months free", cta: "Choose Studio",
+        { name: "Studio", monthly: "19.99 €", annual: "16.58 €", note: "199 €/yr, 2 months free", cta: "Choose Studio",
           items: ["Everything in Protected", "5 agents", "Per-agent rules", "Priority support"] },
       ],
       faqTitle: "Straight answers",

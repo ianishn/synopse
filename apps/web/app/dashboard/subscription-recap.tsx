@@ -9,11 +9,11 @@ const PLANS_FR: { key: PlanKey; name: string; monthly: string; annual: string; s
   { key: "free", name: "Gratuit", monthly: "0 €", annual: "0 €", gains: [
     "1 agent protégé", "3 règles actives", "Validation des actions via Telegram", "Kill switch", "Journal 7 jours", "Support communautaire",
   ] },
-  { key: "protege", name: "Protégé", monthly: "9 €", annual: "7,50 €", star: true, gains: [
+  { key: "protege", name: "Protégé", monthly: "9,99 €", annual: "8,25 €", star: true, gains: [
     "Règles illimitées (bibliothèque + profils métier)", "Plafonds de dépense, alerte à 80 % et blocage auto",
     "Surveillance de bon fonctionnement (agent silencieux, tâche manquée)", "Rapport hebdomadaire", "Journal 90 jours", "Support email sous 48 h",
   ] },
-  { key: "studio", name: "Studio", monthly: "19 €", annual: "15,83 €", gains: [
+  { key: "studio", name: "Studio", monthly: "19,99 €", annual: "16,58 €", gains: [
     "Jusqu'à 5 agents", "Règles configurables agent par agent", "Comparaison des agents (coût, activité, interceptions)", "Export du journal en CSV", "Support prioritaire",
   ] },
 ];
@@ -22,11 +22,11 @@ const PLANS_EN: typeof PLANS_FR = [
   { key: "free", name: "Free", monthly: "0 €", annual: "0 €", gains: [
     "1 protected agent", "3 active rules", "Action approval via Telegram", "Kill switch", "7-day log", "Community support",
   ] },
-  { key: "protege", name: "Protected", monthly: "9 €", annual: "7.50 €", star: true, gains: [
+  { key: "protege", name: "Protected", monthly: "9.99 €", annual: "8.25 €", star: true, gains: [
     "Unlimited rules (library + job profiles)", "Spending caps, alert at 80% and auto-block",
     "Health monitoring (silent agent, missed task)", "Weekly report", "90-day log", "Email support within 48 h",
   ] },
-  { key: "studio", name: "Studio", monthly: "19 €", annual: "15.83 €", gains: [
+  { key: "studio", name: "Studio", monthly: "19.99 €", annual: "16.58 €", gains: [
     "Up to 5 agents", "Per-agent rule configuration", "Agent comparison (cost, activity, interceptions)", "CSV log export", "Priority support",
   ] },
 ];
