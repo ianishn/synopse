@@ -6,7 +6,7 @@ import { UI, type Lang } from "@/lib/lang";
 import { GlowCard } from "@/components/ui/glow-card";
 
 type AgentRow = {
-  id: string; name: string; status: string; last_heartbeat_at: string | null;
+  id: string; name: string; framework: string; status: string; last_heartbeat_at: string | null;
   actions30d: number; interceptions: number; monthCost: number; daily_budget_eur: number | null;
 };
 
@@ -14,6 +14,11 @@ const STATUS: Record<string, { dot: string; label: string; cls: string }> = {
   active: { dot: "bg-green-500", label: "online", cls: "text-green-400" },
   silent: { dot: "bg-amber-500", label: "unreachable", cls: "text-amber-400" },
   frozen: { dot: "bg-red-500", label: "frozenLabel", cls: "text-red-400" },
+};
+
+const FRAMEWORKS: Record<string, { label: string; icon: string }> = {
+  openclaw: { label: "OpenClaw", icon: "/agents/openclaw.png" },
+  claude: { label: "Claude", icon: "/agents/claude.png" },
 };
 
 function heartbeat(ts: string | null): string {
@@ -30,6 +35,9 @@ export function AgentsPanel({ agents, maxAgents, lang }: { agents: AgentRow[]; m
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editFw, setEditFw] = useState("openclaw");
 
   async function toggleFreeze(a: AgentRow) {
     setBusy(true);
@@ -40,6 +48,15 @@ export function AgentsPanel({ agents, maxAgents, lang }: { agents: AgentRow[]; m
     setBusy(true);
     await fetch(`/api/agents/${a.id}`, { method: "DELETE" });
     setBusy(false); setConfirmId(null); router.refresh();
+  }
+  function startEdit(a: AgentRow) {
+    setConfirmId(null); setEditId(a.id); setEditName(a.name); setEditFw(a.framework in FRAMEWORKS ? a.framework : "openclaw");
+  }
+  async function saveEdit(a: AgentRow) {
+    if (!editName.trim()) return;
+    setBusy(true);
+    await fetch(`/api/agents/${a.id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: editName.trim(), framework: editFw }) });
+    setBusy(false); setEditId(null); router.refresh();
   }
 
   return (
@@ -59,15 +76,22 @@ export function AgentsPanel({ agents, maxAgents, lang }: { agents: AgentRow[]; m
 
       {agents.map((a) => {
         const st = STATUS[a.status] ?? STATUS.active;
+        const fw = FRAMEWORKS[a.framework] ?? FRAMEWORKS.openclaw;
         return (
           <GlowCard key={a.id} className="rounded-xl"><div>
             <div className="flex items-center justify-between px-5 py-4">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="font-semibold text-off">{a.name}</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-0.5 text-xs text-muted" title={`${ui.connectedTo} ${fw.label}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={fw.icon} alt={fw.label} width={14} height={14} className="h-3.5 w-3.5 object-contain" />{fw.label}
+                </span>
                 <span className={`inline-flex items-center gap-1.5 text-sm ${st.cls}`}><span className={`h-2 w-2 rounded-full ${st.dot}`} />{ui[st.label as "online" | "unreachable" | "frozenLabel"]}</span>
                 <span className="font-mono text-xs text-muted">· {heartbeat(a.last_heartbeat_at)}</span>
               </div>
               <div className="flex shrink-0 items-center gap-2">
+                <button disabled={busy} onClick={() => (editId === a.id ? setEditId(null) : startEdit(a))}
+                  className="rounded-full border border-line px-3.5 py-1.5 text-xs text-muted transition hover:border-s400 hover:text-off disabled:opacity-50">{ui.edit}</button>
                 <button disabled={busy} onClick={() => toggleFreeze(a)}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition disabled:opacity-50 ${a.status === "frozen" ? "border border-line text-off hover:border-s400" : "border border-line text-muted hover:border-red-500/50 hover:text-red-400"}`}>
                   {a.status === "frozen" ? ui.unfreeze : ui.freeze}
@@ -76,6 +100,33 @@ export function AgentsPanel({ agents, maxAgents, lang }: { agents: AgentRow[]; m
                   className="rounded-full border border-line px-3.5 py-1.5 text-xs text-muted transition hover:border-red-500/50 hover:text-red-400 disabled:opacity-50">{ui.del}</button>
               </div>
             </div>
+            {editId === a.id && (
+              <div className="flex flex-col gap-3 border-t border-line px-5 py-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`name-${a.id}`} className="text-xs text-muted">{ui.agentName}</label>
+                  <input id={`name-${a.id}`} value={editName} maxLength={60} onChange={(e) => setEditName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") saveEdit(a); }}
+                    className="w-full rounded-lg border border-line bg-void px-3 py-1.5 text-sm text-off outline-none transition focus:border-orange sm:w-56" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs text-muted">{ui.connectedTo}</span>
+                  <div className="flex gap-2">
+                    {Object.entries(FRAMEWORKS).map(([key, f]) => (
+                      <button key={key} type="button" onClick={() => setEditFw(key)}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs transition ${editFw === key ? "border-orange text-off" : "border-line text-muted hover:border-s400"}`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={f.icon} alt={f.label} width={14} height={14} className="h-3.5 w-3.5 object-contain" />{f.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <button disabled={busy || !editName.trim()} onClick={() => saveEdit(a)}
+                    className="rounded-full bg-orange px-4 py-1.5 text-xs font-medium text-white transition hover:bg-orange-bright disabled:opacity-50">{ui.save}</button>
+                  <button onClick={() => setEditId(null)} className="rounded-full border border-line px-4 py-1.5 text-xs text-muted transition hover:border-s400">{ui.cancel}</button>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-3 gap-px border-t border-line bg-line/40">
               <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-off">{a.actions30d.toLocaleString(lang === "en" ? "en-GB" : "fr-FR")}</div><div className="text-xs text-muted">{ui.actions30d}</div></div>
               <div className="bg-void px-5 py-3"><div className="font-mono text-lg tabular-nums text-orange-bright">{a.interceptions}</div><div className="text-xs text-muted">{ui.interceptions}</div></div>

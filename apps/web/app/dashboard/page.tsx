@@ -41,7 +41,7 @@ export default async function Dashboard() {
   const plan = await planForUser(db, user.id);
 
   const { data: agentsRaw } = await db.from("agents")
-    .select("id, name, status, last_heartbeat_at, daily_budget_eur, monthly_budget_eur")
+    .select("id, name, framework, status, last_heartbeat_at, daily_budget_eur, monthly_budget_eur")
     .eq("user_id", user.id).order("created_at");
   const agents = agentsRaw ?? [];
   const ids = agents.map((a) => a.id);
@@ -71,7 +71,7 @@ export default async function Dashboard() {
   for (const s of spendRows ?? []) { const m = metrics.get(s.agent_id); if (m) m.monthCost += Number(s.est_cost_eur); }
 
   const agentRows = agents.map((a) => ({
-    id: a.id, name: a.name, status: a.status, last_heartbeat_at: a.last_heartbeat_at,
+    id: a.id, name: a.name, framework: a.framework, status: a.status, last_heartbeat_at: a.last_heartbeat_at,
     daily_budget_eur: a.daily_budget_eur,
     actions30d: metrics.get(a.id)?.actions30d ?? 0,
     interceptions: metrics.get(a.id)?.interceptions ?? 0,

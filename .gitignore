@@ -29,3 +29,7 @@ openclaw-workspace-state.json
 
 # Secrets de la démo (token d'agent) — jamais en clair dans le repo
 demo/.env
+
+# graphify (cerveau local, jamais en prod)
+graphify-out/
+.graphify_python
