@@ -25,6 +25,18 @@ test("sous-domaine de l'allowlist accepté", () => {
   const r = evaluateMatcher({ domain_allowlist: ["anthropic.com"] }, "web_fetch", { url: "https://api.anthropic.com" }, DAY);
   assert.equal(r.matched, false);
 });
+test("écriture LOCALE contenant un domaine → pas d'alerte (faux positif du test réel)", () => {
+  // Régression : en test de production, l'agent se faisait bloquer en écrivant un
+  // simple brouillon contenant une adresse e-mail. Écrire en local n'exfiltre rien.
+  const r = evaluateMatcher(m("no-unknown-domain"), "write", { path: "reponse.md", content: "contact : yann@entreprise.fr" }, DAY);
+  assert.equal(r.matched, false);
+});
+
+test("envoi RÉSEAU vers ce même domaine → toujours intercepté", () => {
+  const r = evaluateMatcher(m("no-unknown-domain"), "web_fetch", { url: "https://entreprise.fr/upload" }, DAY);
+  assert.equal(r.matched, true);
+});
+
 test("nom de fichier avec extension ≠ domaine (faux positif évité)", () => {
   const r = evaluateMatcher(m("no-unknown-domain"), "write_file", { path: "rapport.final.pdf" }, DAY);
   assert.equal(r.matched, false);

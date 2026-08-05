@@ -25,7 +25,7 @@ export const RULES_CATALOG: RuleTemplate[] = [
     description_fr: "Bloque l'exfiltration : tout envoi vers un site jamais vu demande validation.",
     label_en: "Never send to an unknown domain",
     description_en: "Blocks exfiltration: any send to a never-seen site needs your approval.",
-    matcher_json: { domain_allowlist: [] },
+    matcher_json: { domain_allowlist: [], exclude_tool_names: ["write", "edit", "read", "apply_patch", "str_replace", "create_file", "ls", "glob", "grep", "todo"] },
     profiles: ["perso", "commercant", "builder"],
     default_severity: "confirm",
   },

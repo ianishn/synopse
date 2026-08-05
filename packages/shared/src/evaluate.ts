@@ -51,6 +51,9 @@ export function evaluateMatcher(
   const text = JSON.stringify(params ?? {});
 
   if (matcher.tool_names && !matcher.tool_names.includes(toolName)) return NO_MATCH;
+  // Outils hors périmètre : une écriture locale ne peut pas exfiltrer, la déclencher
+  // noierait l'utilisateur sous les fausses alertes.
+  if (matcher.exclude_tool_names?.includes(toolName)) return NO_MATCH;
 
   if (matcher.params_pattern) {
     // Regex venant de la config compilée (serveur de confiance). "iu" : insensible à la casse.

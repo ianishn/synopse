@@ -17,3 +17,15 @@ dist/
 # Divers
 .DS_Store
 *.log
+
+# Fichiers d'état générés par OpenClaw dans le workspace de démo
+AGENTS.md
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md
+openclaw-workspace-state.json
+
+# Secrets de la démo (token d'agent) — jamais en clair dans le repo
+demo/.env

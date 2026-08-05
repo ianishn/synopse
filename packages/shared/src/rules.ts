@@ -6,6 +6,8 @@
 export type RuleMatcher = {
   /** Noms d'outils ciblés (ex. ["web_fetch", "exec"]). Absent = tous. */
   tool_names?: string[];
+  /** Outils explicitement HORS périmètre (ex. écriture locale pour une règle d'exfiltration). */
+  exclude_tool_names?: string[];
   /** Regex (source string) appliquée au JSON.stringify des params. */
   params_pattern?: string;
   /** Domaines à traiter comme inconnus s'ils ne sont PAS dans cette allowlist. */
