@@ -95,21 +95,21 @@ export function Landing({ lang }: { lang: Lang }) {
         </div>
       </section>
 
-      {/* 3 · Comment ça marche, SECTION INVERSÉE (contraste : fond clair, encre sombre) */}
-      <section data-section="how" className="relative bg-off px-6 py-24 text-[#0f172a]">
+      {/* 3 · Comment ça marche — même fond sombre que le reste du site */}
+      <section data-section="how" className="relative px-6 py-24">
         <div className="mx-auto max-w-5xl text-center">
           <Reveal>
-            <p className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-orange">{t.how.eyebrow}</p>
+            <p className="eyebrow">{t.how.eyebrow}</p>
             <h2 className="mt-4 text-3xl font-bold">{t.how.title}</h2>
           </Reveal>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {t.how.steps.map(([title, desc], i) => (
               <Reveal key={title} delay={i * 90}>
-                <div className="relative h-full overflow-hidden rounded-2xl border border-[#0f172a]/12 bg-white p-7 text-left shadow-[0_10px_30px_-18px_rgba(15,23,42,0.4)] transition duration-300 hover:-translate-y-1">
+                <div className="relative h-full overflow-hidden rounded-2xl border border-line bg-void p-7 text-left transition duration-300 hover:-translate-y-1 hover:border-s400">
                   {i === 1 && <BorderBeam duration={10} borderWidth={2} />}
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--orange-soft)] font-mono text-sm font-medium text-orange">{i + 1}</span>
-                  <h3 className="mt-4 font-semibold">{title}</h3>
-                  <p className="mt-2 text-[0.95rem] text-[#334155]">{desc}</p>
+                  <h3 className="mt-4 font-semibold text-off">{title}</h3>
+                  <p className="mt-2 text-[0.95rem] text-s400">{desc}</p>
                 </div>
               </Reveal>
             ))}
