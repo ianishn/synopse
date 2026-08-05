@@ -1,13 +1,31 @@
-# HANDOFF — état du projet (sauvegarde 2026-08-05, fin de journée)
+# HANDOFF — état du projet (sauvegarde 2026-08-06)
 
-Dernier commit : `21978bb` sur `build-v1`. **Pas encore poussé** — `git push origin build-v1` à faire.
-`main` (= prod, synopse.eu) est en retard sur `build-v1` : ne rien y pousser sans accord explicite.
+`main` = `build-v1` = prod (déploiement continu : autorisation permanente du propriétaire de
+fusionner build-v1 → main sans redemander, sauf migrations DB / changements risqués).
 
 ## Où on en est vraiment
 
 V1 complète et **validée en production avec un vrai agent** (voir §Test réel).
 Le produit fonctionne bout en bout : un agent tente une action sensible → Synopse intercepte →
 notification Telegram → l'humain refuse → l'action est bloquée → l'incident est au journal.
+
+## Session 2026-08-06 (tout est en prod)
+
+- **Connecteur Claude Code** : hook PreToolUse (`packages/plugin/claude-hook.mjs`), bundle servi
+  sur synopse.eu/claude-hook.mjs, choix de plateforme dans /dashboard/connect (met à jour
+  `agents.framework`). Validé E2E avec le chemin « Autoriser » via Telegram. Doc : BACKEND.md §6quinquies.
+- **Builder de règles personnalisées (Studio)** : /dashboard/rules, API /api/rules/custom
+  (matcher construit côté serveur depuis des champs typés, jamais de regex libre). Le schéma
+  était prêt (rules.template_id null + params_json fusionné par compile-config).
+- **Pricing** : 9,99/19,99 € mensuel, 99/199 € annuel. 4 nouveaux Prices Stripe (mode test),
+  env Vercel mises à jour via CLI, affichage partout (landing, dashboard, CGV).
+- **Hub Compte** retravaillé : bloc identité + plan, menu groupé avec icônes SVG, page
+  Préférences (langue + statut Telegram), déconnexion dans le menu.
+- **Dashboard agents** : renommage + plateforme (PATCH /api/agents/:id), badge OpenClaw/Claude.
+- **Landing** : pipeline simplifié en 3 étapes (icônes SVG, plus d'émojis — règle permanente),
+  section Installation repassée en sombre, orbite remplacée par cartes OpenClaw + Claude.
+- **Graphify** : graphe de connaissances du repo dans `graphify-out/` (gitignoré) — interroger
+  avant de relire les fichiers ; `--update` après modif de docs.
 
 ## Ce qui existe
 
@@ -77,11 +95,13 @@ matcher vient de la table `rule_templates`, pas du fichier TS :
 ## À FAIRE
 
 ### Suite du test réel (là où on s'est arrêtés)
-Manches 2 à 7 de `demo/SCENARIO-TEST.md` : dépense (149 €), publication (tester le chemin **Autoriser**,
-jamais fait), suppression de masse, fuite de secrets, kill switch (dashboard + `STOP`/`REPRISE` Telegram),
-plafonds.
+Manches 2 à 7 de `demo/SCENARIO-TEST.md` : dépense (149 €), suppression de masse, fuite de secrets,
+kill switch (dashboard + `STOP`/`REPRISE` Telegram), plafonds. Le chemin **Autoriser** (manche 3)
+a été validé le 2026-08-06 via le hook Claude Code — à rejouer côté OpenClaw si on veut être puriste.
 Retours qualitatifs jamais recueillis : clarté du message Telegram pour un non-technicien, délai ressenti,
 comportement de l'agent après un refus, mise à jour live du dashboard.
+Nouveaux tests à faire : parcours client complet du connecteur Claude Code depuis /dashboard/connect
+(installation vierge, pas notre setup local) + une règle custom Studio de bout en bout.
 
 ### Actions manuelles de config (non bloquantes)
 1. Migrations Supabase si pas déjà appliquées : `0005_subscriptions_created_at.sql`, `0006_realtime.sql`.

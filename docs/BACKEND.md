@@ -123,6 +123,31 @@ Deux chemins d'authentification, à ne jamais mélanger :
 
 **Secrets prod à poser avant lancement** : `STRIPE_WEBHOOK_SECRET` (Stripe Dashboard) et enregistrer le webhook Telegram avec `TELEGRAM_WEBHOOK_SECRET` (voir §6bis).
 
+## 6quinquies. Connecteur Claude Code (validé E2E 2026-08-06)
+
+Deuxième plateforme après OpenClaw. Même backend, même token, zéro changement serveur.
+
+- **Source** : `packages/plugin/claude-hook.mjs` — portage stdin/stdout du plugin OpenClaw.
+  Hook **PreToolUse** : reçoit `{ tool_name, tool_input }` sur stdin, répond
+  `{ hookSpecificOutput: { permissionDecision: "deny", ... } }` sur stdout. Pas de sortie
+  = flux de permission normal de Claude Code (on ne contourne jamais ses garde-fous natifs).
+- **Distribution** : bundle autonome (esbuild, ~8 ko) servi sur `https://www.synopse.eu/claude-hook.mjs`
+  (fichier `apps/web/public/claude-hook.mjs`). **⚠️ Après toute modif du hook ou d'`evaluate.ts`, rebundler :**
+  `npx esbuild packages/plugin/claude-hook.mjs --bundle --platform=node --format=esm --outfile=apps/web/public/claude-hook.mjs`
+- **Installation client** (générée par `/dashboard/connect`, plateforme « Claude Code ») :
+  1. `~/.synopse/claude-token` (le token) + téléchargement du hook dans `~/.synopse/`
+  2. `~/.claude/settings.json` → hooks.PreToolUse, matcher `*`, `timeout: 960` (le polling
+     d'approbation peut durer 15 min ; un timeout hook trop court = refus fail-safe côté serveur
+     mais UX dégradée).
+- **Différences vs OpenClaw** : pas de processus permanent → statut/kill switch re-vérifié à chaque
+  appel d'outil si le dernier check date de > 25 s (état disque `~/.synopse/claude-hook-state.json`) ;
+  pas de hook `llm_output` → pas de remontée d'usage tokens (plafonds F4 partiels).
+- **Piège Windows** : jamais de `process.exit()` dans le hook — assert libuv possible pendant la
+  fermeture des sockets keep-alive, et un crash sur le chemin « deny » serait un fail-open. On laisse
+  la boucle d'événements se vider (handles undici unref → sortie naturelle).
+- **Validé E2E** : interception `Bash`/curl vers domaine inconnu → approbation → Telegram →
+  « Autoriser » → verdict `approved` → l'action passe (premier test du chemin Autoriser).
+
 ## 7. Environnements
 
 - `main` = prod (synopse.eu, Vercel). `build-v1` = branche de travail, preview Vercel.

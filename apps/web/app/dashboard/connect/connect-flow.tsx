@@ -24,12 +24,29 @@ function CopyBlock({ label, value }: { label: string; value: string }) {
   );
 }
 
+const PLATFORMS = [
+  { key: "openclaw", label: "OpenClaw", icon: "/agents/openclaw.png" },
+  { key: "claude", label: "Claude Code", icon: "/agents/claude.png" },
+] as const;
+
 export function ConnectFlow() {
   const [pairing, setPairing] = useState<Pairing | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
+  const [platform, setPlatform] = useState<"openclaw" | "claude">("openclaw");
   const poll = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function pickPlatform(p: "openclaw" | "claude") {
+    setPlatform(p);
+    // Le badge de plateforme du dashboard reflète le choix fait ici.
+    if (pairing) {
+      fetch(`/api/agents/${pairing.agent_id}`, {
+        method: "PATCH", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ framework: p }),
+      }).catch(() => {});
+    }
+  }
 
   async function generate() {
     setBusy(true); setError(null);
@@ -69,6 +86,16 @@ export function ConnectFlow() {
   const configBlock = `SYNOPSE_AGENT_TOKEN=${pairing.token}`;
   const openclawBlock = `openclaw config set plugins.load.paths '["<dossier-du-plugin-synopse>"]' --strict-json
 openclaw config set plugins.entries.synopse.hooks.timeoutMs 600000 --strict-json`;
+  const claudeInstallBlock = `mkdir -p ~/.synopse
+curl -fsSL https://www.synopse.eu/claude-hook.mjs -o ~/.synopse/claude-hook.mjs
+printf '%s' "${pairing.token}" > ~/.synopse/claude-token`;
+  const claudeSettingsBlock = `{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "node \\"$HOME/.synopse/claude-hook.mjs\\"", "timeout": 960 }] }
+    ]
+  }
+}`;
 
   return (
     <div className="space-y-5">
@@ -76,24 +103,59 @@ openclaw config set plugins.entries.synopse.hooks.timeoutMs 600000 --strict-json
       <div className={`flex items-center gap-3 rounded-2xl border p-4 ${connected ? "border-mint-300 bg-mint-50" : "border-ink-100 bg-paper"}`}>
         <span className={`h-2.5 w-2.5 rounded-full ${connected ? "bg-mint-500" : "bg-ink-300 pulse-ring"}`} />
         <span className="text-sm font-medium">
-          {connected ? `✅ « ${pairing.name} » est connecté et protégé !` : "En attente de ton agent…"}
+          {connected ? `« ${pairing.name} » est connecté et protégé !` : "En attente de ton agent…"}
         </span>
         {connected && <a href="/dashboard" className="ml-auto text-sm font-medium text-mint-500 hover:text-mint-400">Aller au tableau de bord →</a>}
       </div>
 
-      {/* Étape 1 */}
+      {/* Choix de la plateforme */}
       <div className="rounded-2xl border border-ink-100 bg-paper p-5">
-        <p className="flex items-center gap-2 font-medium"><Step n={1} /> Ajoute ton token à ton agent</p>
-        <p className="mb-3 mt-1 text-sm text-ink-500">Colle cette variable d&apos;environnement là où tourne ton agent (⚠️ affichée une seule fois).</p>
-        <CopyBlock label="Variable d'environnement" value={configBlock} />
+        <p className="font-medium">Ton agent tourne sur…</p>
+        <div className="mt-3 flex gap-2">
+          {PLATFORMS.map((p) => (
+            <button key={p.key} type="button" onClick={() => pickPlatform(p.key)}
+              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${platform === p.key ? "border-orange bg-[var(--orange-soft)] text-orange" : "border-ink-200 text-ink-500 hover:border-ink-400"}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.icon} alt={p.label} width={16} height={16} className="h-4 w-4 object-contain" />{p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Étape 2 */}
-      <div className="rounded-2xl border border-ink-100 bg-paper p-5">
-        <p className="flex items-center gap-2 font-medium"><Step n={2} /> Active le plugin dans OpenClaw</p>
-        <p className="mb-3 mt-1 text-sm text-ink-500">Deux commandes à lancer une seule fois sur ta machine OpenClaw.</p>
-        <CopyBlock label="Configuration OpenClaw" value={openclawBlock} />
-      </div>
+      {platform === "openclaw" ? (
+        <>
+          {/* Étape 1 — OpenClaw */}
+          <div className="rounded-2xl border border-ink-100 bg-paper p-5">
+            <p className="flex items-center gap-2 font-medium"><Step n={1} /> Ajoute ton token à ton agent</p>
+            <p className="mb-3 mt-1 text-sm text-ink-500">Colle cette variable d&apos;environnement là où tourne ton agent (affichée une seule fois).</p>
+            <CopyBlock label="Variable d'environnement" value={configBlock} />
+          </div>
+
+          {/* Étape 2 — OpenClaw */}
+          <div className="rounded-2xl border border-ink-100 bg-paper p-5">
+            <p className="flex items-center gap-2 font-medium"><Step n={2} /> Active le plugin dans OpenClaw</p>
+            <p className="mb-3 mt-1 text-sm text-ink-500">Deux commandes à lancer une seule fois sur ta machine OpenClaw.</p>
+            <CopyBlock label="Configuration OpenClaw" value={openclawBlock} />
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Étape 1 — Claude Code */}
+          <div className="rounded-2xl border border-ink-100 bg-paper p-5">
+            <p className="flex items-center gap-2 font-medium"><Step n={1} /> Installe le garde Synopse</p>
+            <p className="mb-3 mt-1 text-sm text-ink-500">Trois commandes dans un terminal (Git Bash sous Windows). Ton token est déjà dedans — affiché une seule fois.</p>
+            <CopyBlock label="Installation (terminal)" value={claudeInstallBlock} />
+          </div>
+
+          {/* Étape 2 — Claude Code */}
+          <div className="rounded-2xl border border-ink-100 bg-paper p-5">
+            <p className="flex items-center gap-2 font-medium"><Step n={2} /> Branche le hook dans Claude Code</p>
+            <p className="mb-3 mt-1 text-sm text-ink-500">Fusionne ce bloc dans ton fichier <code className="text-orange">~/.claude/settings.json</code>, puis redémarre Claude Code.</p>
+            <CopyBlock label="settings.json" value={claudeSettingsBlock} />
+            <p className="mt-3 text-xs text-ink-400">Windows hors Git Bash : remplace &quot;$HOME&quot; par le chemin complet, ex. C:\Users\toi\.synopse\claude-hook.mjs</p>
+          </div>
+        </>
+      )}
 
       {/* Étape 3 */}
       <div className="rounded-2xl border border-ink-100 bg-paper p-5">
