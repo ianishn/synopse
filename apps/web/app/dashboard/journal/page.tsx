@@ -3,6 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { planForUser } from "@/lib/plan";
+import { getLang } from "@/lib/lang-server";
+import { UI } from "@/lib/lang";
+import { AppHeader } from "@/components/ui/app-header";
 
 export const dynamic = "force-dynamic";
 const FILTERS: Record<string, string[]> = {
@@ -17,6 +20,8 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
   if (!user) redirect("/login");
   const { f } = await searchParams;
 
+  const lang = await getLang();
+  const ui = UI[lang];
   const db = createServiceClient();
   const plan = await planForUser(db, user.id);
   // Rétention imposée côté serveur : 7 jours en gratuit, 90 jours en payant.
@@ -47,16 +52,16 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
       </header>
       <main className="mx-auto max-w-2xl space-y-6 px-6 py-10">
         <div>
-          <h1 className="text-2xl font-bold">Journal</h1>
+          <h1 className="text-2xl font-bold">{ui.journal}</h1>
           <p className="mt-1 text-sm text-ink-500">
-            Chaque action sensible, en clair. Conservé {retentionDays} jours.
+            {ui.journalSub} {retentionDays} {ui.days}.
             {plan === "free" && (
-              <> <a href="/dashboard/account/billing" className="font-medium text-orange hover:text-orange-bright">Passe à Protégé pour 90 jours d&apos;historique</a>.</>
+              <> <a href="/dashboard/account/billing" className="font-medium text-orange hover:text-orange-bright">{ui.upgradeJournal}</a>.</>
             )}
           </p>
         </div>
         <nav className="flex flex-wrap gap-2 text-sm">
-          {[["", "Tout"], ["bloque", "Bloqué"], ["valide", "Validations"], ["info", "Infos"]].map(([k, label]) => (
+          {[["", ui.fAll], ["bloque", ui.fBlocked], ["valide", ui.fApprovals], ["info", ui.fInfo]].map(([k, label]) => (
             <Link key={k} href={k ? `?f=${k}` : "?"}
               className={`rounded-full px-4 py-1.5 transition ${
                 f === k || (!f && !k)
@@ -74,12 +79,12 @@ export default async function Journal({ searchParams }: { searchParams: Promise<
               <div>
                 <p>{e.summary_fr}</p>
                 <p className="mt-1 text-xs text-ink-400">
-                  {names[e.agent_id]} · {new Date(e.created_at).toLocaleString("fr-FR")}
+                  {names[e.agent_id]} · {new Date(e.created_at).toLocaleString(lang === "en" ? "en-GB" : "fr-FR")}
                 </p>
               </div>
             </li>
           ))}
-          {!events?.length && <li className="p-6 text-center text-sm text-ink-400">Aucun événement pour l&apos;instant.</li>}
+          {!events?.length && <li className="p-6 text-center text-sm text-ink-400">{ui.noEvents}</li>}
         </ul>
       </main>
     </div>

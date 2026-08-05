@@ -5,7 +5,7 @@ import { UI, type Lang } from "@/lib/lang";
 
 type PlanKey = "free" | "protege" | "studio";
 
-const PLANS: { key: PlanKey; name: string; monthly: string; annual: string; star?: boolean; gains: string[] }[] = [
+const PLANS_FR: { key: PlanKey; name: string; monthly: string; annual: string; star?: boolean; gains: string[] }[] = [
   { key: "free", name: "Gratuit", monthly: "0 €", annual: "0 €", gains: [
     "1 agent protégé", "3 règles actives", "Validation des actions via Telegram", "Kill switch", "Journal 7 jours", "Support communautaire",
   ] },
@@ -18,10 +18,24 @@ const PLANS: { key: PlanKey; name: string; monthly: string; annual: string; star
   ] },
 ];
 
+const PLANS_EN: typeof PLANS_FR = [
+  { key: "free", name: "Free", monthly: "0 €", annual: "0 €", gains: [
+    "1 protected agent", "3 active rules", "Action approval via Telegram", "Kill switch", "7-day log", "Community support",
+  ] },
+  { key: "protege", name: "Protected", monthly: "9 €", annual: "7.50 €", star: true, gains: [
+    "Unlimited rules (library + job profiles)", "Spending caps, alert at 80% and auto-block",
+    "Health monitoring (silent agent, missed task)", "Weekly report", "90-day log", "Email support within 48 h",
+  ] },
+  { key: "studio", name: "Studio", monthly: "19 €", annual: "15.83 €", gains: [
+    "Up to 5 agents", "Per-agent rule configuration", "Agent comparison (cost, activity, interceptions)", "CSV log export", "Priority support",
+  ] },
+];
+
 const RANK: Record<PlanKey, number> = { free: 0, protege: 1, studio: 2 };
 
 export function SubscriptionRecap({ plan, renewal, lang }: { plan: PlanKey; renewal: string | null; lang: Lang }) {
   const ui = UI[lang];
+  const PLANS = lang === "en" ? PLANS_EN : PLANS_FR;
   const [annual, setAnnual] = useState(true);
   const [busy, setBusy] = useState(false);
 

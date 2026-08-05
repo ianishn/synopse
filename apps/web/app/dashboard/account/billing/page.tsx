@@ -2,10 +2,12 @@
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";
 import { BillingManager } from "./billing-manager";
+import { getLang } from "@/lib/lang-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function BillingPage() {
+  const lang = await getLang();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const db = createServiceClient();
@@ -21,11 +23,11 @@ export default async function BillingPage() {
       const current = ((list as { data?: Array<Record<string, unknown>> }).data ?? [])
         .find((s) => ["active", "trialing", "past_due"].includes(s.status as string));
       if (current) {
-        renewal = current.current_period_end ? new Date((current.current_period_end as number) * 1000).toLocaleDateString("fr-FR") : null;
+        renewal = current.current_period_end ? new Date((current.current_period_end as number) * 1000).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR") : null;
         cancelAtEnd = Boolean(current.cancel_at_period_end);
       }
     } catch { /* Stripe indisponible : on affiche l'essentiel depuis la DB */ }
   }
 
-  return <BillingManager plan={plan} status={sub?.status ?? "active"} renewal={renewal} cancelAtEnd={cancelAtEnd} />;
+  return <BillingManager plan={plan} status={sub?.status ?? "active"} renewal={renewal} cancelAtEnd={cancelAtEnd} lang={lang} />;
 }

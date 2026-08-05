@@ -2,6 +2,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AccountMenu } from "./account-menu";
+import { getLang } from "@/lib/lang-server";
+import { UI } from "@/lib/lang";
+import { AppHeader } from "@/components/ui/app-header";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +12,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+  const lang = await getLang();
+  const ui = UI[lang];
 
   return (
     <div className="min-h-screen">
@@ -21,9 +26,9 @@ export default async function AccountLayout({ children }: { children: React.Reac
         </div>
       </header>
       <main className="mx-auto max-w-4xl px-6 py-10">
-        <h1 className="mb-6 text-2xl font-bold">Mon compte</h1>
+        <h1 className="mb-6 text-2xl font-bold">{ui.myAccount}</h1>
         <div className="grid gap-6 sm:grid-cols-[200px_1fr]">
-          <AccountMenu />
+          <AccountMenu lang={lang} />
           <div>{children}</div>
         </div>
       </main>

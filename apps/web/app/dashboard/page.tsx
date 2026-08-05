@@ -106,7 +106,7 @@ export default async function Dashboard() {
     ? await db.from("approvals").select("rule_id").in("agent_id", ids) : { data: [] };
   const trig = new Map<string, number>();
   for (const a of apprByRule ?? []) if (a.rule_id) trig.set(a.rule_id, (trig.get(a.rule_id) ?? 0) + 1);
-  const tplLabel = Object.fromEntries(RULES_CATALOG.map((t) => [t.id, t.label_fr]));
+  const tplLabel = Object.fromEntries(RULES_CATALOG.map((t) => [t.id, (lang === "en" ? t.label_en : t.label_fr) ?? t.label_fr]));
   const rulesSummary = (rulesRows ?? []).map((r) => ({
     template_id: r.template_id ?? r.id,
     label: (r.template_id && tplLabel[r.template_id]) || "Règle personnalisée",

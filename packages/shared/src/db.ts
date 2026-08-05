@@ -42,6 +42,9 @@ export type RuleTemplate = {
   id: string;
   label_fr: string;
   description_fr: string;
+  /** Traductions anglaises (affichage seulement, la DB ne stocke que le FR). */
+  label_en?: string;
+  description_en?: string;
   matcher_json: RuleMatcher;
   profiles: string[]; // ["perso" | "commercant" | "builder"]
   default_severity: RuleSeverity;

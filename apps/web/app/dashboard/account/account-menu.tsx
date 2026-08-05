@@ -2,14 +2,15 @@
 /** Menu latéral du hub Compte (état actif via le chemin courant). */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UI, type Lang } from "@/lib/lang";
 
-const ITEMS = [
-  { href: "/dashboard/account", label: "Profil" },
-  { href: "/dashboard/account/billing", label: "Facturation" },
-  { href: "/dashboard/account/payments", label: "Paiements" },
-];
-
-export function AccountMenu() {
+export function AccountMenu({ lang }: { lang: Lang }) {
+  const ui = UI[lang];
+  const ITEMS = [
+    { href: "/dashboard/account", label: ui.tabProfile },
+    { href: "/dashboard/account/billing", label: ui.tabBilling },
+    { href: "/dashboard/account/payments", label: ui.tabPayments },
+  ];
   const path = usePathname();
   return (
     <nav className="flex gap-1 overflow-x-auto rounded-2xl border border-ink-100 bg-paper p-1.5 text-sm sm:flex-col sm:gap-0.5">
