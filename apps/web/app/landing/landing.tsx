@@ -127,11 +127,11 @@ export function Landing({ lang }: { lang: Lang }) {
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-s400">
               {lang === "fr"
-                ? "OpenClaw aujourd'hui, Claude juste derrière : le besoin de contrôle survivra aux frameworks."
-                : "OpenClaw today, Claude right behind: the need for control will outlive the frameworks."}
+                ? "OpenClaw et Claude dès aujourd'hui : le besoin de contrôle survivra aux frameworks."
+                : "OpenClaw and Claude, starting today: the need for control will outlive the frameworks."}
             </p>
           </Reveal>
-          <Reveal delay={120}><SupportedAgents soonLabel={lang === "fr" ? "Bientôt" : "Soon"} /></Reveal>
+          <Reveal delay={120}><SupportedAgents /></Reveal>
         </div>
       </section>
 

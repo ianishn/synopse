@@ -1,13 +1,13 @@
 /**
  * Agents supportés — remplace l'orbite décorative : uniquement les plateformes
- * réellement branchées (ou imminentes), icône + nom, sans animation.
+ * réellement branchées, icône + nom, sans animation.
  */
-const AGENTS: { name: string; icon: string; soon?: boolean }[] = [
+const AGENTS: { name: string; icon: string }[] = [
   { name: "OpenClaw", icon: "/agents/openclaw.png" },
-  { name: "Claude", icon: "/agents/claude.png", soon: true },
+  { name: "Claude", icon: "/agents/claude.png" },
 ];
 
-export function SupportedAgents({ soonLabel }: { soonLabel: string }) {
+export function SupportedAgents() {
   return (
     <div className="mt-12 flex flex-wrap items-center justify-center gap-4 pb-20">
       {AGENTS.map((a) => (
@@ -15,9 +15,6 @@ export function SupportedAgents({ soonLabel }: { soonLabel: string }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={a.icon} alt={a.name} width={36} height={36} className="h-9 w-9 object-contain" />
           <span className="text-lg font-semibold text-off">{a.name}</span>
-          {a.soon && (
-            <span className="rounded-full border border-orange/40 px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wide text-orange">{soonLabel}</span>
-          )}
         </div>
       ))}
     </div>
