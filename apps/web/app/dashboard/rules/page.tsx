@@ -4,6 +4,7 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { RULES_CATALOG } from "@synopse/shared";
 import { maxRules, planForUser } from "@/lib/plan";
 import { RulesManager } from "./rules-manager";
+import { CustomRules, type CustomRule } from "./custom-rules";
 import { getLang } from "@/lib/lang-server";
 import { UI } from "@/lib/lang";
 
@@ -18,8 +19,14 @@ export default async function RulesPage() {
   const ui = UI[lang];
   const db = createServiceClient();
   const { data: rules } = await db.from("rules")
-    .select("template_id, enabled").eq("user_id", user.id);
-  const enabled = new Set((rules ?? []).filter((r) => r.enabled).map((r) => r.template_id));
+    .select("id, template_id, enabled, severity, params_json").eq("user_id", user.id);
+  const enabled = new Set((rules ?? []).filter((r) => r.enabled && r.template_id).map((r) => r.template_id));
+  const customRules: CustomRule[] = (rules ?? [])
+    .filter((r) => !r.template_id)
+    .map((r) => ({
+      id: r.id, enabled: r.enabled, severity: r.severity,
+      label: String((r.params_json as { label_fr?: string })?.label_fr ?? "Règle personnalisée"),
+    }));
   const plan = await planForUser(db, user.id);
 
   return (
@@ -39,6 +46,7 @@ export default async function RulesPage() {
             {ui.rulesSub}
           </p>
         </div>
+        <CustomRules rules={customRules} plan={plan} lang={lang} />
         <RulesManager
           catalog={RULES_CATALOG.map((t) => ({
             id: t.id, label: (lang === "en" ? t.label_en : t.label_fr) ?? t.label_fr, description: (lang === "en" ? t.description_en : t.description_fr) ?? t.description_fr,
