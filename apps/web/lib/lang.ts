@@ -66,6 +66,10 @@ export const UI = {
     fAll: "Tout", fBlocked: "Bloqué", fApprovals: "Validations", fInfo: "Infos",
     // Compte
     myAccount: "Mon compte", tabProfile: "Profil", tabBilling: "Facturation", tabPayments: "Paiements",
+    tabPreferences: "Préférences", grpAccount: "Compte", grpBilling: "Facturation",
+    language: "Langue", langHint: "La langue du tableau de bord et des pages.",
+    notifTelegram: "Notifications Telegram", tgLinked: "Telegram relié : tu reçois les demandes de validation sur ton téléphone.",
+    tgNotLinked: "Telegram non relié : tu ne reçois pas les validations en temps réel.", tgGoLink: "Relier Telegram",
     displayName: "Nom affiché", yourName: "Ton nom", save: "Enregistrer",
     emailAddr: "Adresse email", emailHint: "Un email de confirmation sera envoyé à la nouvelle adresse.", modify: "Modifier",
     password: "Mot de passe", pwdHint: "8 caractères minimum.", newPwd: "Nouveau mot de passe", change: "Changer",
@@ -145,6 +149,10 @@ export const UI = {
     fAll: "All", fBlocked: "Blocked", fApprovals: "Approvals", fInfo: "Info",
     // Account
     myAccount: "My account", tabProfile: "Profile", tabBilling: "Billing", tabPayments: "Payments",
+    tabPreferences: "Preferences", grpAccount: "Account", grpBilling: "Billing",
+    language: "Language", langHint: "The language of the dashboard and pages.",
+    notifTelegram: "Telegram notifications", tgLinked: "Telegram linked: approval requests reach your phone.",
+    tgNotLinked: "Telegram not linked: you are not receiving real-time approvals.", tgGoLink: "Link Telegram",
     displayName: "Display name", yourName: "Your name", save: "Save",
     emailAddr: "Email address", emailHint: "A confirmation email will be sent to the new address.", modify: "Change",
     password: "Password", pwdHint: "8 characters minimum.", newPwd: "New password", change: "Change",
