@@ -44,5 +44,6 @@ export async function POST(request: Request) {
     name: agent.name,
     token, // affiché une seule fois, jamais restockable
     telegram_link_url: `https://t.me/SynGuardBot?start=${linkCode}`,
+    telegram_link_code: linkCode,
   });
 }

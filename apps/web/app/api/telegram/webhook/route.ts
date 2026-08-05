@@ -70,18 +70,37 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  // --- Lien de compte : "/start <code>" ---
-  const m = msg?.text?.match(/^\/start\s+(\S+)/);
-  if (m) {
+  // --- Lien de compte ---
+  // Deux chemins : "/start <code>" (lien depuis le dashboard) OU le code collé seul.
+  // Le second est indispensable : quand le bot a déjà été démarré une fois, Telegram
+  // n'envoie plus le paramètre du lien, et l'utilisateur se retrouve bloqué sans rien comprendre.
+  const text: string = (msg?.text ?? "").trim();
+  const code = text.match(/^\/start\s+(\S+)/)?.[1] ?? (/^[a-f0-9]{12}$/i.test(text) ? text : null);
+
+  if (code) {
     const { data } = await db
       .from("user_settings")
       .update({ telegram_chat_id: String(msg.chat.id) })
-      .eq("telegram_link_code", m[1]).select("user_id").single();
+      .eq("telegram_link_code", code).select("user_id").single();
     await tg("sendMessage", {
       chat_id: msg.chat.id,
       text: data
-        ? "✅ Compte Synopse relié. Tu recevras ici les demandes de validation de ton agent."
-        : "Code de liaison inconnu. Relance la liaison depuis ton tableau de bord Synopse.",
+        ? "✅ Compte Synopse relié. Tu recevras ici les demandes de validation de ton agent.\n\nCommandes utiles : STOP pour tout geler, REPRISE pour réactiver."
+        : "❌ Code de liaison inconnu ou expiré.\n\nOuvre ton tableau de bord Synopse, va dans « Connecter un agent », puis colle-moi ici le code affiché sous le bouton Telegram.",
+    });
+    return NextResponse.json({ ok: true });
+  }
+
+  // "/start" nu ou message libre : on répond toujours quelque chose (sinon l'utilisateur
+  // croit que le bot est mort).
+  if (msg?.chat?.id) {
+    const { data: linked } = await db.from("user_settings")
+      .select("user_id").eq("telegram_chat_id", String(msg.chat.id)).maybeSingle();
+    await tg("sendMessage", {
+      chat_id: msg.chat.id,
+      text: linked
+        ? "👋 Ce chat est déjà relié à ton compte Synopse.\n\nTu recevras ici les demandes de validation. Commandes : STOP pour tout geler, REPRISE pour réactiver."
+        : "👋 Bienvenue sur Synopse.\n\nPour relier ce chat à ton compte : ouvre ton tableau de bord, clique « Connecter un agent », puis colle-moi ici le code de liaison affiché (12 caractères).",
     });
   }
   return NextResponse.json({ ok: true });

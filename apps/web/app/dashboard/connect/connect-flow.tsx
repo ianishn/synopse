@@ -5,7 +5,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 
-type Pairing = { agent_id: string; name: string; token: string; telegram_link_url: string };
+type Pairing = { agent_id: string; name: string; token: string; telegram_link_url: string; telegram_link_code: string };
 
 function CopyBlock({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
@@ -103,6 +103,10 @@ openclaw config set plugins.entries.synopse.hooks.timeoutMs 600000 --strict-json
           className="inline-flex items-center gap-2 rounded-full bg-mint-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-mint-400">
           Relier mon Telegram <span aria-hidden>→</span>
         </a>
+        <p className="mt-3 text-sm text-ink-400">
+          Le bouton ne fait rien (bot déjà démarré) ? Envoie simplement ce code au bot :
+        </p>
+        <CopyBlock label="Code de liaison" value={pairing.telegram_link_code} />
       </div>
     </div>
   );
