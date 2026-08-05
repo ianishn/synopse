@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TutorialModal } from "../tutorial-modal";
+import { getLang } from "@/lib/lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,8 @@ export default async function TutoPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+  const lang = await getLang();
+  const en = lang === "en";
 
   return (
     <div className="min-h-screen">
@@ -21,13 +24,13 @@ export default async function TutoPage() {
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-6 py-16 text-center">
-        <h1 className="text-2xl font-bold">Comment fonctionne Synopse ?</h1>
+        <h1 className="text-2xl font-bold">{en ? "How does Synopse work?" : "Comment fonctionne Synopse ?"}</h1>
         <p className="mx-auto mt-2 max-w-md text-sm text-ink-500">
-          Un tour guidé en 4 étapes : connecter ton agent, choisir tes règles, valider depuis Telegram, gérer tes agents.
+          {en ? "A 4-step guided tour: connect your agent, pick your rules, approve from Telegram, manage your agents." : "Un tour guidé en 4 étapes : connecter ton agent, choisir tes règles, valider depuis Telegram, gérer tes agents."}
         </p>
         <div className="mt-8 flex justify-center">
           {/* Ouvert d'emblée sur cette page dédiée. */}
-          <TutorialModal defaultOpen label="Revoir le tutoriel" />
+          <TutorialModal defaultOpen lang={lang} label={en ? "Replay the tutorial" : "Revoir le tutoriel"} />
         </div>
       </main>
     </div>

@@ -46,7 +46,7 @@ export function AgentsPanel({ agents, maxAgents, lang }: { agents: AgentRow[]; m
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
-          Mes agents <span className="ml-1 font-mono text-xs text-line">{agents.length}/{maxAgents === Infinity ? "∞" : maxAgents}</span>
+          {ui.myAgents} <span className="ml-1 font-mono text-xs text-line">{agents.length}/{maxAgents === Infinity ? "∞" : maxAgents}</span>
         </h2>
         {agents.length < maxAgents && <a href="/dashboard/connect" className="text-sm font-medium text-orange hover:text-orange-bright">{ui.connectAgent}</a>}
       </div>

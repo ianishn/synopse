@@ -5,28 +5,29 @@
  * un bouton déclencheur (ou ouvert d'emblée via `defaultOpen`, ex. page /dashboard/tuto).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { UI, type Lang } from "@/lib/lang";
 
 type Step = { title: string; body: string; visual: () => React.ReactNode };
 
-const STEPS: Step[] = [
+const stepsFor = (lang: Lang): Step[] => { const en = lang === "en"; return [
   {
-    title: "1 · Connecte ton agent",
-    body: "Génère un token depuis « Connecter un agent », colle-le chez ton agent, active le plugin. Synopse se relie tout seul.",
+    title: en ? "1 · Connect your agent" : "1 · Connecte ton agent",
+    body: en ? "Generate a token from « Connect an agent », paste it on your agent, enable the plugin. Synopse links itself." : "Génère un token depuis « Connecter un agent », colle-le chez ton agent, active le plugin. Synopse se relie tout seul.",
     visual: () => (
       <div className="space-y-2">
         <code className="pop-in block rounded-lg bg-void-2 border border-line p-2 font-mono text-[0.7rem] text-orange">SYNOPSE_AGENT_TOKEN=syn_••••</code>
         <p className="pop-in flex items-center gap-2 text-sm text-mint-500" style={{ animationDelay: "0.4s" }}>
-          <span className="h-2 w-2 rounded-full bg-mint-500" /> Plugin activé, agent connecté
+          <span className="h-2 w-2 rounded-full bg-mint-500" /> {en ? "Plugin enabled, agent connected" : "Plugin activé, agent connecté"}
         </p>
       </div>
     ),
   },
   {
-    title: "2 · Choisis tes règles",
-    body: "En français, sans jargon. Active un profil entier ou règle par règle : ce que ton agent doit te demander avant d'agir.",
+    title: en ? "2 · Pick your rules" : "2 · Choisis tes règles",
+    body: en ? "Plain words, no jargon. Turn on a whole profile or rule by rule: what your agent must ask you before acting." : "En français, sans jargon. Active un profil entier ou règle par règle : ce que ton agent doit te demander avant d'agir.",
     visual: () => (
       <div className="space-y-2">
-        {["Toujours me demander avant de dépenser", "Jamais d'envoi vers un domaine inconnu"].map((r, i) => (
+        {(en ? ["Always ask me before spending", "Never send to an unknown domain"] : ["Toujours me demander avant de dépenser", "Jamais d'envoi vers un domaine inconnu"]).map((r, i) => (
           <div key={r} className="pop-in flex items-center justify-between rounded-lg border border-ink-100 p-2 text-sm" style={{ animationDelay: `${i * 0.25}s` }}>
             <span>{r}</span>
             <span className="relative h-5 w-9 rounded-full bg-mint-500"><span className="absolute right-0.5 top-0.5 h-4 w-4 rounded-full bg-white" /></span>
@@ -36,35 +37,38 @@ const STEPS: Step[] = [
     ),
   },
   {
-    title: "3 · Valide depuis Telegram",
-    body: "Quand une action sensible arrive, tu reçois une demande claire sur ton téléphone. Un tap suffit.",
+    title: en ? "3 · Approve from Telegram" : "3 · Valide depuis Telegram",
+    body: en ? "When a sensitive action shows up, you get a clear request on your phone. One tap is enough." : "Quand une action sensible arrive, tu reçois une demande claire sur ton téléphone. Un tap suffit.",
     visual: () => (
       <div className="pop-in rounded-xl border border-mint-300 bg-mint-50 p-3 text-sm">
-        <p className="font-medium">⚠️ Sam veut envoyer 47 fichiers vers un domaine inconnu</p>
+        <p className="font-medium">⚠️ {en ? "Sam wants to send 47 files to an unknown domain" : "Sam veut envoyer 47 fichiers vers un domaine inconnu"}</p>
         <div className="mt-2 flex gap-2">
-          <span className="rounded-full bg-orange px-3 py-1 text-xs font-semibold text-white">Refuser</span>
-          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs">Autoriser</span>
+          <span className="rounded-full bg-orange px-3 py-1 text-xs font-semibold text-white">{en ? "Refuse" : "Refuser"}</span>
+          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs">{en ? "Allow" : "Autoriser"}</span>
         </div>
       </div>
     ),
   },
   {
-    title: "4 · Gère tes agents",
-    body: "Depuis le tableau de bord : gèle tout en un tap (kill switch), ou supprime un agent quand tu n'en veux plus.",
+    title: en ? "4 · Manage your agents" : "4 · Gère tes agents",
+    body: en ? "From the dashboard: freeze everything in one tap (kill switch), or delete an agent when you no longer want it." : "Depuis le tableau de bord : gèle tout en un tap (kill switch), ou supprime un agent quand tu n'en veux plus.",
     visual: () => (
       <div className="pop-in flex items-center justify-between rounded-xl border border-ink-100 p-3 text-sm">
-        <span className="flex items-center gap-2 font-medium">Sam <span className="inline-flex items-center gap-1 text-ink-500"><span className="h-2 w-2 rounded-full bg-mint-500" />Actif</span></span>
+        <span className="flex items-center gap-2 font-medium">Sam <span className="inline-flex items-center gap-1 text-ink-500"><span className="h-2 w-2 rounded-full bg-mint-500" />{en ? "Active" : "Actif"}</span></span>
         <span className="flex gap-2">
-          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs">Geler</span>
-          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs text-red-400">Supprimer</span>
+          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs">{en ? "Freeze" : "Geler"}</span>
+          <span className="rounded-full border border-ink-200 px-3 py-1 text-xs text-red-400">{en ? "Delete" : "Supprimer"}</span>
         </span>
       </div>
     ),
   },
-];
+]; };
 
-export function TutorialModal({ defaultOpen = false, label = "Comment ça marche ?" }:
-  { defaultOpen?: boolean; label?: string }) {
+export function TutorialModal({ defaultOpen = false, label, lang = "fr" }:
+  { defaultOpen?: boolean; label?: string; lang?: Lang }) {
+  const ui = UI[lang];
+  const en = lang === "en";
+  const STEPS = stepsFor(lang);
   const [open, setOpen] = useState(defaultOpen);
   const [i, setI] = useState(0);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +97,7 @@ export function TutorialModal({ defaultOpen = false, label = "Comment ça marche
     <>
       <button onClick={() => { setI(0); setOpen(true); }}
         className="rounded-full border border-ink-200 px-4 py-2 text-sm font-medium transition hover:border-mint-400">
-        {label}
+        {label ?? ui.howItWorks}
       </button>
 
       {open && (
@@ -103,8 +107,8 @@ export function TutorialModal({ defaultOpen = false, label = "Comment ça marche
             onClick={(e) => e.stopPropagation()}
             className="modal-in w-full max-w-md rounded-3xl border border-ink-100 bg-paper p-6 shadow-[0_30px_80px_-24px_rgba(6,9,8,0.4)]">
             <div className="flex items-center justify-between">
-              <p className="eyebrow">Tutoriel</p>
-              <button ref={closeRef} onClick={close} aria-label="Fermer le tutoriel"
+              <p className="eyebrow">{en ? "Tutorial" : "Tutoriel"}</p>
+              <button ref={closeRef} onClick={close} aria-label={en ? "Close tutorial" : "Fermer le tutoriel"}
                 className="rounded-full px-2 text-ink-400 hover:text-ink-900">✕</button>
             </div>
 
@@ -117,23 +121,23 @@ export function TutorialModal({ defaultOpen = false, label = "Comment ça marche
             <div className="mt-5 flex items-center justify-between">
               <div className="flex gap-1.5">
                 {STEPS.map((_, n) => (
-                  <button key={n} onClick={() => setI(n)} aria-label={`Étape ${n + 1}`}
+                  <button key={n} onClick={() => setI(n)} aria-label={`${en ? "Step" : "Étape"} ${n + 1}`}
                     className={`h-1.5 rounded-full transition-[width,background-color] ${n === i ? "w-6 bg-mint-500" : "w-2.5 bg-ink-200"}`} />
                 ))}
               </div>
               <div className="flex gap-2">
                 {i > 0 && (
                   <button onClick={() => setI(i - 1)} className="rounded-full border border-ink-200 px-4 py-2 text-sm font-medium transition hover:border-ink-400">
-                    Précédent
+                    {en ? "Previous" : "Précédent"}
                   </button>
                 )}
                 {last ? (
                   <a href="/dashboard/connect" className="rounded-full bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-bright">
-                    Connecter mon agent
+                    {en ? "Connect my agent" : "Connecter mon agent"}
                   </a>
                 ) : (
                   <button onClick={() => setI(i + 1)} className="rounded-full bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-bright">
-                    Suivant
+                    {en ? "Next" : "Suivant"}
                   </button>
                 )}
               </div>

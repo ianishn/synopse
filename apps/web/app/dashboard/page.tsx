@@ -154,7 +154,7 @@ export default async function Dashboard() {
             <span className={`h-2.5 w-2.5 rounded-full ${header.dot}`} />
             <span>{header.text}</span>
           </div>
-          <TutorialModal label={ui.howItWorks} />
+          <TutorialModal lang={lang} />
         </div>
 
         {/* Module 2 — Action en attente (temps réel) */}
